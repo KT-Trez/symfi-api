@@ -5,10 +5,15 @@
     "moduleResolution": "Node",
     "noImplicitAny": true,
     "outDir": "dist",
+    "skipLibCheck": true,
     "sourceMap": true,
     "target": "es2022"
   },
   "exclude": [
     "node_modules"
+  ],
+  "include": [
+    "src",
+    "typings"
   ]
 }

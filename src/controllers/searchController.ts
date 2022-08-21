@@ -15,9 +15,10 @@ export default class searchController {
 			return;
 
 		const youtube = await new Innertube({gl: 'US'});
-		const search = await youtube.search(req.query.keywords.toString(), {client: 'YOUTUBE'});
+		const search = await youtube.search(decodeURI(req.query.keywords.toString()), {client: 'YOUTUBE'});
 
-		if (search?.videos.length > 0)
+		//@ts-ignore
+		if (search?.videos.length > 0) //@ts-ignore
 			return res.status(200).json(search.videos);
 
 		return res.status(404).json(new APIError(404, ['no such resource'], 'RESOURCE_ERROR'));

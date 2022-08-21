@@ -23,7 +23,7 @@
     "typescript": "^4.7.4"
   },
   "license": "MIT",
-  "main": "dist/server.js",
+  "main": "dist/src/server.js",
   "name": "musicly_server",
   "private": true,
   "repository": {
@@ -33,7 +33,7 @@
   "scripts": {
     "build": "tsc",
     "build-watch": "tsc -w",
-    "start": "node dist/app.js",
+    "start": "node dist/src/server.js",
     "start-watch": "nodemon"
   },
   "type": "module",

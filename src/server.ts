@@ -3,6 +3,7 @@ import 'dotenv/config';
 import express from 'express';
 import fs from 'fs';
 import Innertube from 'youtubei.js';
+import {LogLevel} from '../typings/enums.js';
 import {searchRouter} from './routes/searchRouter.js';
 
 
@@ -25,7 +26,7 @@ app.use((req, res, next) => {
 // temp placeholder; refactor later
 app.get('/download', async (req, res) => {
 	const youtube = await new Innertube();
-	const search = await youtube.search('rick astley');
+	const search = await youtube.search('rick');
 
 	//@ts-ignore
 	const stream = youtube.download(search.videos[0].id, {
@@ -45,13 +46,13 @@ app.get('/download', async (req, res) => {
 	});
 
 	stream.on('progress', (info) => {
-		process.stdout.clearLine();
+		process.stdout.clearLine(0);
 		process.stdout.cursorTo(0);
 		process.stdout.write(`[YOUTUBE.JS] Downloaded ${info.percentage}% (${info.downloaded_size}MB) of ${info.size}MB`);
 	});
 
 	stream.on('end', () => {
-		process.stdout.clearLine();
+		process.stdout.clearLine(0);
 		process.stdout.cursorTo(0);
 		console.info('[YOUTUBE.JS]', 'Done!');
 	});
