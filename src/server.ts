@@ -1,12 +1,14 @@
-import express from 'express';
 import cors from 'cors';
+import 'dotenv/config';
+import express from 'express';
 import fs from 'fs';
 import Innertube from 'youtubei.js';
 import {searchRouter} from './routes/searchRouter.js';
 
 
-const app = express()
-const port = 3000
+const app = express();
+const port = process.env.PORT ?? 3000;
+
 
 app.use(cors());
 app.use(express.static('public'))
@@ -15,14 +17,12 @@ app.use(express.static('public'))
 app.use('/search', searchRouter);
 
 app.use((req, res, next) => {
-	console.log('incoming req' + req.origin)
+	if (parseInt(process.env.LOG_LEVEL) >= LogLevel.DEBUG)
+		console.debug(`${req.ip} ${req.method} ${req.path}`, new Date());
 	next();
-})
+});
 
-app.get('/', (req, res) => {
-	res.send('Hello World!')
-})
-
+// temp placeholder; refactor later
 app.get('/download', async (req, res) => {
 	const youtube = await new Innertube();
 	const search = await youtube.search('rick astley');
@@ -62,6 +62,8 @@ app.get('/download', async (req, res) => {
 	fs.createReadStream(`./cache/${search.videos[0].id}.wav`).pipe(res);
 })
 
+
 app.listen(port, () => {
-	console.log(`Example app listening on port ${port}`)
+	if (parseInt(process.env.LOG_LEVEL) >= LogLevel.INFO)
+		console.info('Server started - :' + port, new Date());
 })
