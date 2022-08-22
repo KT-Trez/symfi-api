@@ -14,8 +14,8 @@ export default class searchController {
 		if (handleRequestValidationErrors(req, res))
 			return;
 
-		const youtube = await new Innertube({gl: 'US'});
-		const search = await youtube.search(decodeURI(req.query.keywords.toString()), {client: 'YOUTUBE'});
+		const youtube = await new Innertube();
+		const search = await youtube.search(decodeURI(req.query.keywords.toString()));
 
 		//@ts-ignore
 		if (search?.videos.length > 0) //@ts-ignore

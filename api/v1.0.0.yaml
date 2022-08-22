@@ -1,0 +1,152 @@
+openapi: 3.1.0
+info:
+  description: Server that searches and downloads audio for Musicly client's.
+  summary: Musicly backend server.
+  title: Musicly Server
+  version: 1.0.0
+
+paths:
+  /search/youtube:
+    get:
+      description: Searches through YouTube against given query.
+      responses:
+        200:
+          description: Search results.
+          content:
+            application/json:
+              schema:
+                properties:
+                  items:
+                    properties:
+                      channel:
+                        properties:
+                          id:
+                            type: string
+                          name:
+                            type: string
+                          url:
+                            type: string
+                        type: object
+                      description:
+                        type: string
+                      id:
+                        type: string
+                      metadata:
+                        properties:
+                          badges:
+                            type: array
+                          duration:
+                            properties:
+                              accessibility_label:
+                                type: string
+                              seconds:
+                                type: number
+                              simple_text:
+                                type: string
+                            type: object
+                          owner_badges:
+                            type: array
+                          published:
+                            type: string
+                          short_view_count_text:
+                            properties:
+                              accessibility_label:
+                                type: string
+                              simple_text:
+                                type: string
+                            type: object
+                          thumbnails:
+                            items:
+                              properties:
+                                height:
+                                  type: number
+                                url:
+                                  type: string
+                                width:
+                                  type: number
+                            type: array
+                          view_count:
+                            type: string
+                      title:
+                        type: string
+                      url:
+                        type: string
+                    type: object
+                type: array
+              $ref: '#/components/schemas/AuthResponse'
+        401:
+          description: Invalid search keywords.
+          content:
+            application/json:
+              $ref: '#/components/schemas/AuthResponse'
+        500:
+          $ref: '#/components/responses/ServerError'
+    parameters:
+      - description: Query keywords.
+        name: keywords
+        in: query
+        required: true
+        schema:
+          type: string
+
+#  /download/youtube:
+#    get:
+#      description: Checks if login is valid.
+#      responses:
+#        200:
+#          content:
+#            application/json:
+#              $ref: '#/components/schemas/AuthResponse'
+#          description: Login is valid.
+#        400:
+#          $ref: '#/components/responses/InvalidRequest'
+#        401:
+#          content:
+#            application/json:
+#              $ref: '#/components/schemas/AuthResponse'
+#          description: Login is invalid.
+#        500:
+#          $ref: '#/components/responses/ServerError'
+#    parameters:
+#      - description: Client's login.
+#        name: login
+#        in: query
+#        required: true
+#        schema:
+#          type: string
+
+components:
+  responses:
+    NotFound:
+      content:
+        application/json:
+          $ref: '#/components/schemas/APIError'
+      description: Resource not found.
+    InvalidRequest:
+      content:
+        application/json:
+          $ref: '#/components/schemas/APIError'
+      description: Invalid request.
+    ServerError:
+      content:
+        application/json:
+          $ref: '#/components/schemas/APIError'
+      description: Server internal error.
+
+  schemas:
+    APIError:
+      properties:
+        code:
+          type: number
+        messages:
+          items:
+            type: string
+          type: array
+        type:
+          type: string
+      type: object
+    APISuccess:
+      properties:
+        success:
+          type: boolean
+      type: object
