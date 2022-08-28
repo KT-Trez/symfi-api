@@ -27,4 +27,8 @@ app.use((req, res, next) => {
 app.listen(port, () => {
 	if (parseInt(process.env.LOG_LEVEL) >= LogLevel.INFO)
 		console.info('Server started - :' + port, new Date());
-})
+});
+
+export {
+	app
+}

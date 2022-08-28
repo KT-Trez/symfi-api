@@ -10,7 +10,8 @@
     "target": "es2022"
   },
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "test"
   ],
   "include": [
     "src",

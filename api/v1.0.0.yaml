@@ -74,11 +74,8 @@ paths:
                     type: object
                 type: array
               $ref: '#/components/schemas/AuthResponse'
-        401:
-          description: Invalid search keywords.
-          content:
-            application/json:
-              $ref: '#/components/schemas/AuthResponse'
+        400:
+          $ref: '#/components/responses/InvalidRequest'
         500:
           $ref: '#/components/responses/ServerError'
     parameters:
@@ -89,31 +86,28 @@ paths:
         schema:
           type: string
 
-#  /download/youtube:
-#    get:
-#      description: Checks if login is valid.
-#      responses:
-#        200:
-#          content:
-#            application/json:
-#              $ref: '#/components/schemas/AuthResponse'
-#          description: Login is valid.
-#        400:
-#          $ref: '#/components/responses/InvalidRequest'
-#        401:
-#          content:
-#            application/json:
-#              $ref: '#/components/schemas/AuthResponse'
-#          description: Login is invalid.
-#        500:
-#          $ref: '#/components/responses/ServerError'
-#    parameters:
-#      - description: Client's login.
-#        name: login
-#        in: query
-#        required: true
-#        schema:
-#          type: string
+  /download/youtube:
+    get:
+      description: Downloads audio file from YouTube.
+      responses:
+        200:
+          content:
+            audio/wav:
+              schema:
+                format: binary
+                type: string
+          description: Requested audio
+        400:
+          $ref: '#/components/responses/InvalidRequest'
+        500:
+          $ref: '#/components/responses/ServerError'
+    parameters:
+      - description: Audio's id from YouTube.
+        name: audioID
+        in: query
+        required: true
+        schema:
+          type: string
 
 components:
   responses:
