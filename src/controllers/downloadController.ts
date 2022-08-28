@@ -2,6 +2,7 @@ import {EventEmitter} from 'events';
 import express from 'express';
 import fs from 'fs';
 import {Worker} from 'worker_threads';
+import {Workers} from '../../typings/workers';
 import APIError from '../classes/APIError.js';
 import handleRequestValidationErrors from '../tools/handleRequestValidationErrors.js';
 

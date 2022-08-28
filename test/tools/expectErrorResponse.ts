@@ -1,4 +1,4 @@
-export default function expectErrorResponse(res, status) {
+export default function expectErrorResponse(res: any, status: number) {
     res.should.have.status(status);
     res.body.should.be.a('object');
     res.body.should.have.property('code');

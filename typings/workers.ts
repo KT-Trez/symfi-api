@@ -1,4 +1,4 @@
-declare namespace Workers {
+export declare namespace Workers {
 	namespace WorkerData {
 		interface DownloadAudio {
 			videoID: string;
