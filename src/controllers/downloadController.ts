@@ -28,9 +28,7 @@ export default class downloadController {
 			return streamRes();
 
 		if (downloadController.queue.has(videoID))
-			return downloadController.queue.get(videoID).on('downloaded', () => {
-				streamRes();
-			});
+			return downloadController.queue.get(videoID).once('downloaded', streamRes);
 
 		downloadController.queue.set(videoID, new EventEmitter());
 
