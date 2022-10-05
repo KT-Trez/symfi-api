@@ -1,4 +1,4 @@
-import {Musicly} from '../../typings';
+import {Musicly} from '../../../typings/index.js';
 
 
 export default class SavedAudioMetadata implements Musicly.SavedSongMetadata {

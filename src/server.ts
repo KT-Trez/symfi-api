@@ -4,6 +4,7 @@ import express from 'express';
 import {LogLevel} from '../typings/enums.js';
 import {downloadRouter} from './routes/downloadRouter.js';
 import {searchRouter} from './routes/searchRouter.js';
+import {syncRouter} from './routes/syncRouter.js';
 
 
 const app = express();
@@ -16,6 +17,7 @@ app.use(express.static('public'))
 
 app.use('/download', downloadRouter);
 app.use('/search', searchRouter);
+app.use('/sync', syncRouter);
 
 app.use((req, res, next) => {
 	if (parseInt(process.env.LOG_LEVEL) >= LogLevel.DEBUG)

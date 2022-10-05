@@ -71,4 +71,10 @@ export declare module Musicly {
 		title: string;
 		url: string;
 	}
+
+	export interface SyncEntry {
+		playLists: PlaylistMetadata[];
+		songsList: SavedSongMetadata[];
+		timer: NodeJS.Timer;
+	}
 }

@@ -1,7 +1,7 @@
 import chai from 'chai';
 import chaiHttp from 'chai-http';
 import {app} from '../../src/server.js';
-import expectErrorResponse from '../tools/expectErrorResponse.js';
+import expectErrorResponse from '../helper/tools/expectErrorResponse.js';
 
 
 chai.should();

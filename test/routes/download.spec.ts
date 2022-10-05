@@ -1,7 +1,7 @@
 import chai from 'chai';
 import chaiHttp from 'chai-http';
 import {app} from '../../src/server.js';
-import expectErrorResponse from '../tools/expectErrorResponse.js';
+import expectErrorResponse from '../helper/tools/expectErrorResponse.js';
 
 
 chai.should();
@@ -18,7 +18,7 @@ describe('Test \'download\' endpoint', () => {
 					res.should.have.status(200);
 					done();
 				});
-		});
+		}).timeout(5000);
 
 		it('It should download audio file multiple times at once', async () => {
 			let counter = 0;
@@ -35,7 +35,7 @@ describe('Test \'download\' endpoint', () => {
 								resolve();
 						});
 			});
-		});
+		}).timeout(5000);
 
 		it('It should download two audio files at once', async () => {
 			let counter = 0;
