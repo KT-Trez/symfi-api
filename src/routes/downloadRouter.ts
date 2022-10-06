@@ -8,7 +8,7 @@ const router = express.Router();
 router.get('/youtube',
 	query('audioID', 'missing from query').not().isEmpty(),
 	query('audioID', 'audioID must be a string').isString(),
-	// todo: validate if id exists
+	// todo: !IMPORTANT validate if id exists
 	downloadController.youtube);
 
 export {

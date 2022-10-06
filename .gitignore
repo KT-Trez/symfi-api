@@ -6,6 +6,7 @@
 /.idea
 
 # production
+/.env
 /cache
 /dist
 

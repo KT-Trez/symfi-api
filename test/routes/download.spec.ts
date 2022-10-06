@@ -51,7 +51,7 @@ describe('Test \'download\' endpoint', () => {
 							if (counter === 4)
 								resolve();
 						});
-				const anotherAudioID = '_6KZI74zKfE';
+				const anotherAudioID = 'doEqUhFiQS4';
 				chai.request(app)
 					.get('/download/youtube?audioID=' + anotherAudioID)
 					.end((err, res) => {

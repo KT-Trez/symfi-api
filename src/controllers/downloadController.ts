@@ -1,9 +1,9 @@
 import {EventEmitter} from 'events';
 import express from 'express';
 import fs from 'fs';
-import {Worker} from 'worker_threads';
-import {Workers} from '../../typings/workers';
+import {Workers} from '../../typings/workers.js';
 import APIError from '../classes/APIError.js';
+import WorkerService from '../services/WorkerService.js';
 import handleRequestValidationErrors from '../tools/handleRequestValidationErrors.js';
 
 
@@ -34,28 +34,7 @@ export default class downloadController {
 
 		try {
 			const videoPath = await new Promise<string>((resolve, reject) => {
-				const workerData: Workers.WorkerData.DownloadAudio = {
-					videoID
-				};
-
-				const worker = new Worker('./dist/src/workers/download-audio', {
-					workerData
-				});
-
-				worker.on('error', err => {
-					reject(err);
-				});
-
-				worker.on('messageerror', err => {
-					reject(err);
-				});
-
-				worker.on('exit', code => {
-					if (code !== 0)
-						reject('worker stopped with exit code: ' + code);
-				});
-
-				worker.on('message', (msg: Workers.ParentPort.DownloadAudio) => {
+				const msgEventHandler = (msg: Workers.ParentPort.DownloadAudio) => {
 					switch (msg.type) {
 						case 'end':
 							downloadController.cache.set(videoID, {
@@ -74,7 +53,17 @@ export default class downloadController {
 							reject(msg.error);
 							break;
 					}
+				};
+
+				WorkerService.queue.push({
+					msgEventHandler: msgEventHandler,
+					workerPath: './dist/src/workers/download-audio',
+					workerData: {
+						videoID
+					}
 				});
+
+				WorkerService.startQueue();
 			});
 
 			fs.createReadStream(videoPath).pipe(res);
