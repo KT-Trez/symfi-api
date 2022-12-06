@@ -1,4 +1,4 @@
-import {Musicly} from '../../typings/index.js';
+import {Musicly} from '../../typings';
 import config from '../config.js';
 import PlaylistMetadata = Musicly.PlaylistMetadata;
 import SavedSongMetadata = Musicly.SavedSongMetadata;
