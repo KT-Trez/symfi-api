@@ -6,8 +6,7 @@ import searchController from '../controllers/searchController.js';
 const router = express.Router();
 
 router.get('/youtube',
-	query('keywords', 'missing from query').not().isEmpty(),
-	query('keywords', 'keywords must be a string').isString(),
+	query('query', 'missing query variable').not().isEmpty().isString(),
 	searchController.youtube);
 
 export {

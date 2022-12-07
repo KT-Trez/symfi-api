@@ -1,26 +1,48 @@
 import express from 'express';
-import Innertube from 'youtubei.js';
-import APIError from '../classes/APIError.js';
-import handleRequestValidationErrors from '../tools/handleRequestValidationErrors.js';
+import {Innertube, UniversalCache} from 'youtubei.js';
+import validateRequestErrors from '../tools/validateRequestErrors';
+import APIError from '../classes/ApiError';
+import MediaInfo from '../classes/MediaInfo';
+import Video from 'youtubei.js/dist/src/parser/classes/Video';
+import {ApiError as IApiError} from '../../gen/model/apiError';
 
 
 export default class searchController {
-	// todo: implement endpoint for Sound Cloud
-	static async soundCloud() {
-
-	}
-
 	static async youtube(req: express.Request, res: express.Response) {
-		if (handleRequestValidationErrors(req, res))
+		if (validateRequestErrors(req, res))
 			return;
 
-		const youtube = await new Innertube();
-		const search = await youtube.search(decodeURI(req.query.keywords.toString()));
+		const query = decodeURI(req.query.query.toString());
 
-		//@ts-ignore
-		if (search?.videos.length > 0) //@ts-ignore
-			return res.status(200).json(search.videos);
+		const youtube = await Innertube.create({
+			cache: new UniversalCache()
+		});
+		const search = await youtube.search(query, {
+			sort_by: 'relevance',
+			type: 'video'
+		});
 
-		return res.status(404).json(new APIError(404, ['no such resource'], 'RESOURCE_ERROR'));
+		if (search.videos.length > 0)
+			return res.status(200).json(
+				search.videos.map((v: Video) => new MediaInfo({
+					channel: {
+						id: v.author.id,
+						name: v.author.name,
+						url: v.author.url
+					},
+					description: v.description,
+					id: v.id,
+					metadata: {
+						duration: {
+							label: v.duration.text,
+							seconds: v.duration.seconds
+						},
+						published: v.published.text
+					},
+					title: v.title.text
+				}))
+			);
+
+		return res.status(404).json(new APIError(404, ['no such resource'], IApiError.TypeEnum.NoResource));
 	}
 }

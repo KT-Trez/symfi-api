@@ -6,16 +6,16 @@ import SyncEntry = Musicly.SyncEntry;
 
 
 export default class SyncService {
+	private static highestID = 0;
+
+	private static lowestFreeID: number[] = [];
 	private static store = new Map<number, SyncEntry>();
 
-	private static highestID = 0;
-	private static lowestFreeID: number[] = [];
-
-	static clear() {
+	public static clear() {
 		this.store.clear();
 	}
 
-	static get(id: number) {
+	public static get(id: number) {
 		if (!this.store.has(id))
 			throw new Error('incorrect id of store item');
 
@@ -26,21 +26,21 @@ export default class SyncService {
 		};
 	}
 
-	static getSize() {
+	public static getSize() {
 		return this.store.size;
 	}
 
-	static has(id: number) {
+	public static has(id: number) {
 		return this.store.has(id);
 	}
 
-	static remove(id: number) {
+	public static remove(id: number) {
 		clearTimeout(this.store.get(id).timer);
 		this.store.delete(id);
 		this.removeID(id);
 	}
 
-	static set(playLists: PlaylistMetadata[], songsList: SavedSongMetadata[]) {
+	public static set(playLists: PlaylistMetadata[], songsList: SavedSongMetadata[]) {
 		const id = this.generateID();
 		const removeTimeout = setTimeout(() => this.remove(id), config.sync.storeTimeoutMS);
 

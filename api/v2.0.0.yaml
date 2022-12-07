@@ -1,0 +1,259 @@
+openapi: 3.0.3
+info:
+  description: Server that searches and downloads audio for Musicly client's.
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+  title: Musicly API - OpenAPI 3.0
+  version: 2.0.0
+
+paths:
+  /media/youtube/{id}:
+    description: Get a download link to YouTube's audio / video
+    get:
+      parameters:
+        - description: ID of a audio / video to get a link to
+          in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                properties:
+                  link:
+                    description: Link to audio / video
+                    example: 'https://rr3---sn-x2pm-3ufk.googlevideo.com/videoplayback'
+                    type: string
+                type: object
+          description: Download link to YouTube's audio / video
+        401:
+          $ref: '#/components/responses/InvalidRequest'
+        404:
+          $ref: '#/components/responses/InvalidRequest'
+        503:
+          $ref: '#/components/responses/ServerError'
+      summary: Gets a link to audio / video
+      tags:
+        - media
+    summary: Get a download link
+
+  /search/youtube:
+    description: Searches for YouTube video with given query
+    get:
+      summary: Gets video matching given keywords
+      parameters:
+        - description: Search query
+          in: query
+          name: query
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/mediaInfo'
+                type: array
+          description: Returns results of media search query tested against YouTube
+        401:
+          $ref: '#/components/responses/InvalidRequest'
+        404:
+          $ref: '#/components/responses/InvalidRequest'
+        503:
+          $ref: '#/components/responses/ServerError'
+      tags:
+        - search
+    summary: Search for video
+
+components:
+  responses:
+    invalidRequest:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/apiError'
+      description: Invalid request
+    noResource:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/apiError'
+      description: Cannot find requested resource
+    serverError:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/apiError'
+      description: Internal server error
+
+  schemas:
+    apiError:
+      properties:
+        code:
+          description: Error's code
+          example: 401
+          type: integer
+        messages:
+          description: Array of additional info
+          items:
+            example: [ 'missing parameter: query', 'parameter <query> is not a string' ]
+            type: string
+          type: array
+        type:
+          description: Error's type
+          enum:
+            - 'INTERNAL_ERROR'
+            - 'INVALID_REQUEST'
+            - 'NO_RESOURCE'
+          example: 'INVALID_REQUEST'
+          type: string
+      type: object
+    mediaInfo:
+      properties:
+        channel:
+          properties:
+            id:
+              description: The channel id
+              example: 'UCuAXFkgsw1L7xaCfnd5JJOw'
+              type: string
+            name:
+              description: The channel name
+              example: 'Rick Astley'
+              type: string
+            url:
+              description: The channel URL
+              example: 'https://www.youtube.com/channel/UCuAXFkgsw1L7xaCfnd5JJOw'
+              type: string
+          type:
+            object
+        description:
+          description: The media description
+          example: 'The official video for “Never Gonna Give You Up” by Rick Astley'
+          type: string
+        id:
+          description: The media id
+          example: 'dQw4w9WgXcQ'
+          type: string
+        metadata:
+          properties:
+            duration:
+              properties:
+                label:
+                  description: The media duration timestamp
+                  example: '3:33'
+                  type: string
+                seconds:
+                  description: The media duration in seconds
+                  example: 213
+                  type: number
+              type: object
+            published:
+              description: The day of publish
+              example: '13 years ago'
+              type: string
+            thumbnails:
+              items:
+                properties:
+                  height:
+                    description: The thumbnail height in px
+                    example: 404
+                    type: number
+                  url:
+                    description: The thumbnail url
+                    example: 'https://i.ytimg.com/vi/dQw4w9WgXcQ/hq720.jpg?sqp=-oaymwEcCNAFEJQDSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLDRxusbm2_TGTnDWEIhBTYW2cUQkw'
+                    type: string
+                  width:
+                    description: The thumbnail width in px
+                    example: 720
+                    type: number
+                type: object
+              type: array
+            views:
+              properties:
+                count:
+                  description: The exact number of media's views
+                  example: 1343586973
+                  type: number
+                label:
+                  description: Label of approximate number of media's views
+                  example: '1.3B views'
+                  type: string
+              type: object
+          type: object
+        title:
+          description: The media title
+          example: 'Rick Astley - Never Gonna Give You Up (Official Music Video)'
+          type: string
+      type: object
+    track:
+      properties:
+        album:
+          description: The track album
+          example: 'Whenever You Need Somebody'
+          type: string
+        artwork:
+          description: The artwork url
+          example: 'https://i.ytimg.com/vi/dQw4w9WgXcQ/hq720.jpg?sqp=-oaymwEcCNAFEJQDSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLDRxusbm2_TGTnDWEIhBTYW2cUQkw'
+          type: string
+        date:
+          description: The track release date in RFC 3339
+          example: '1985-04-12T23:20:50.52Z'
+          type: string
+        description:
+          description: The track description
+          example: 'The official video for “Never Gonna Give You Up” by Rick Astley'
+          type: string
+        duration:
+          description: The duration in seconds
+          example: 213
+          type: integer
+        genre:
+          description: The track id
+          example: 'Dance-pop'
+          type: string
+        id:
+          description: The track genre
+          example: 'dQw4w9WgXcQ'
+          type: string
+        rating:
+          oneOf:
+            - description: The track rating value
+              example: true
+              type: boolean
+            - description: The track rating value
+              example: 5
+              type: number
+        title:
+          description: The track title
+          example: 'Rick Astley - Never Gonna Give You Up (Official Music Video)'
+          type: integer
+        type:
+          description: Stream type
+          enum:
+            - dash
+            - hsl
+            - smoothstreaming
+            - default
+          example: 'dash'
+          type: string
+        url:
+          description: The media URL
+          example: 'https://rr3---sn-x2pm-3ufk.googlevideo.com/videoplayback'
+          type: string
+      type: object
+
+# todo: fill when will be known
+#servers:
+#  - url:
+
+tags:
+  - name: media
+    description: Get a download link to audio / video
+  - name: search
+    description: Search for audio & video info
