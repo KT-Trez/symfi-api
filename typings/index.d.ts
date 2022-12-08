@@ -9,10 +9,15 @@ export declare module Musicly {
 		id: string;
 		metadata: {
 			duration: {
-				label: string
-				seconds: number
+				label: string;
+				seconds: number;
 			}
-			published: string
+			published: string;
+			thumbnails: Thumbnail[];
+			views: {
+				count: number;
+				label: string;
+			}
 		};
 		title: string;
 	}
@@ -94,5 +99,11 @@ export declare module Musicly {
 		playLists: PlaylistMetadata[];
 		songsList: SavedSongMetadata[];
 		timer: NodeJS.Timer;
+	}
+
+	export interface Thumbnail {
+		height: number;
+		url: string;
+		width: number;
 	}
 }

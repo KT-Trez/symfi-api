@@ -248,9 +248,8 @@ components:
           type: string
       type: object
 
-# todo: fill when will be known
-#servers:
-#  - url:
+servers:
+  - url: https://api-musicly.onrender.com/v2/
 
 tags:
   - name: media

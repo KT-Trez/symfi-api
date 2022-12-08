@@ -8,7 +8,7 @@ export default class MediaInfo implements Musicly.MediaInfo {
 	public channel: { id: string; name: string; url: string };
 	public description: string;
 	public id: string;
-	public metadata: { duration: { label: string; seconds: number }; published: string };
+	public metadata: { duration: { label: string; seconds: number }; published: string; thumbnails: Musicly.Thumbnail[]; views: { count: number; label: string } };
 	public title: string;
 
 	constructor(options: MediaInfoConstructor) {

@@ -24,22 +24,27 @@ export default class searchController {
 
 		if (search.videos.length > 0)
 			return res.status(200).json(
-				search.videos.map((v: Video) => new MediaInfo({
+				search.videos.map((video: Video) => new MediaInfo({
 					channel: {
-						id: v.author.id,
-						name: v.author.name,
-						url: v.author.url
+						id: video.author.id,
+						name: video.author.name,
+						url: video.author.url
 					},
-					description: v.description,
-					id: v.id,
+					description: video.description,
+					id: video.id,
 					metadata: {
 						duration: {
-							label: v.duration.text,
-							seconds: v.duration.seconds
+							label: video.duration.text,
+							seconds: video.duration.seconds
 						},
-						published: v.published.text
+						published: video.published.text,
+						thumbnails: video.thumbnails,
+						views: {
+							count: parseInt(video.view_count.text.split(' ')[0].replaceAll(',', '')),
+							label: video.short_view_count.text
+						}
 					},
-					title: v.title.text
+					title: video.title.text
 				}))
 			);
 
