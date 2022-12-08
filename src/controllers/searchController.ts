@@ -4,7 +4,7 @@ import validateRequestErrors from '../tools/validateRequestErrors';
 import APIError from '../classes/ApiError';
 import MediaInfo from '../classes/MediaInfo';
 import Video from 'youtubei.js/dist/src/parser/classes/Video';
-import {ApiError as IApiError} from '../../gen/model/apiError';
+import {ApiErrorType} from '../../typings/enums';
 
 
 export default class searchController {
@@ -43,6 +43,6 @@ export default class searchController {
 				}))
 			);
 
-		return res.status(404).json(new APIError(404, ['no such resource'], IApiError.TypeEnum.NoResource));
+		return res.status(404).json(new APIError(404, ['no such resource'], ApiErrorType.NoResource));
 	}
 }

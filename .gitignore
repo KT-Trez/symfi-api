@@ -8,3 +8,7 @@
 /.env
 /dist/
 /gen/
+
+# unignore
+!/gen/api/
+!/gen/model/

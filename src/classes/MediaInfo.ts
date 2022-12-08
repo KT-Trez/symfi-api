@@ -1,14 +1,17 @@
-import {MediaInfo as IMediaInfo} from '../../gen/model/mediaInfo';
+import {Musicly} from '../../typings';
 
 
-export default class MediaInfo implements IMediaInfo {
-	public channel: IMediaInfo['channel'];
+interface MediaInfoConstructor extends Musicly.MediaInfo {
+}
+
+export default class MediaInfo implements Musicly.MediaInfo {
+	public channel: { id: string; name: string; url: string };
 	public description: string;
 	public id: string;
-	public metadata: IMediaInfo['metadata'];
+	public metadata: { duration: { label: string; seconds: number }; published: string };
 	public title: string;
 
-	constructor(options: IMediaInfo) {
+	constructor(options: MediaInfoConstructor) {
 		this.channel = options.channel;
 		this.description = options.description;
 		this.id = options.id;

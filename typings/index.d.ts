@@ -1,4 +1,22 @@
 export declare module Musicly {
+	export interface MediaInfo {
+		channel: {
+			id: string
+			name: string
+			url: string
+		};
+		description: string;
+		id: string;
+		metadata: {
+			duration: {
+				label: string
+				seconds: number
+			}
+			published: string
+		};
+		title: string;
+	}
+
 	export interface PlaylistData {
 		id: string;
 		isFavourite: boolean;
@@ -37,7 +55,7 @@ export declare module Musicly {
 			},
 			playlists: PlaylistData[];
 			wasPlayed: number;
-		}
+		};
 	}
 
 	export interface SongMetadata {
@@ -45,7 +63,7 @@ export declare module Musicly {
 			id: string;
 			name: string;
 			url: string;
-		}
+		};
 		description: string;
 		id: string;
 		metadata: {
@@ -67,7 +85,7 @@ export declare module Musicly {
 				width: number;
 			}[];
 			view_count: string;
-		}
+		};
 		title: string;
 		url: string;
 	}

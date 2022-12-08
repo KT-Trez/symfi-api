@@ -1,12 +1,12 @@
-import {ApiError as IApiError} from '../../gen/model/apiError';
+import {ApiErrorType} from '../../typings/enums';
 
 
-export default class ApiError implements IApiError {
+export default class ApiError {
 	code: number;
 	messages: string[];
-	type: IApiError.TypeEnum;
+	type: ApiErrorType;
 
-	constructor(code: number, message: string[], type: IApiError.TypeEnum) {
+	constructor(code: number, message: string[], type: ApiErrorType) {
 		this.code = code;
 		this.messages = message;
 		this.type = type;
