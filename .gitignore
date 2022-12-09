@@ -6,9 +6,9 @@
 
 # production
 /.env
+/cache/
 /dist/
 /gen/
 
 # unignore
-!/gen/api/
-!/gen/model/
+!/cache/!keep
