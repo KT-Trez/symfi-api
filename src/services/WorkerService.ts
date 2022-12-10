@@ -1,13 +1,24 @@
 import {Worker} from 'worker_threads';
+import config from '../config';
 
 
 export default class WorkerService {
-	static queue: { msgEventHandler?: (...args: any[]) => void, workerPath: string, workerData?: object }[] = [];
+	static queue: { onMessage?: (...args: any[]) => void, workerPath: string, workerData?: object }[] = [];
 	private static workersCount = 0;
+
+	public static addToQueue(data: object, path: string, onMessage?: (...args: any[]) => void) {
+		this.queue.push({
+			onMessage,
+			workerData: data,
+			workerPath: path
+		});
+
+		this.startQueue();
+	}
 
 	public static async startQueue() {
 		const maxWorkersCount = parseInt(process.env.MAX_WORKER_COUNT);
-		if (WorkerService.workersCount < (isNaN(maxWorkersCount) ? 20 : maxWorkersCount)) {
+		if (WorkerService.workersCount < (isNaN(maxWorkersCount) ? config.workers.maxCount : maxWorkersCount)) {
 			this.workersCount++;
 			await this.pickFromQueue();
 		}
@@ -33,9 +44,9 @@ export default class WorkerService {
 					resolve(true);
 				});
 
-			if (task.msgEventHandler)
+			if (task.onMessage)
 				worker
-					.on('message', task.msgEventHandler);
+					.on('message', task.onMessage);
 		});
 
 		this.workersCount--;

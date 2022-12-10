@@ -9,6 +9,3 @@
 /cache/
 /dist/
 /gen/
-
-# unignore
-!/cache/!keep

@@ -1,7 +1,8 @@
 import express from 'express';
 import validateRequestErrors from '../tools/validateRequestErrors';
-import APIError from '../classes/ApiError';
+import {Innertube, UniversalCache} from 'youtubei.js';
 import {ApiErrorType} from '../../typings/enums';
+import ApiError from '../classes/ApiError';
 
 
 export default class mediaController {
@@ -9,11 +10,29 @@ export default class mediaController {
 		if (validateRequestErrors(req, res))
 			return;
 
+		// the media's id
 		const id = req.params.id;
-		try {
+
+		// redirect request to the local endpoint that streams audio
+		if (process.env.USE_LOCAL)
 			return res.status(200).json({link: `${req.protocol}://${req.get('host')}/v2/content/youtube/${id}`});
+
+		// search instance of the YouTube's API
+		const youtube = await Innertube.create({
+			cache: new UniversalCache()
+		});
+
+		// find external media stream, extract and send its link to the client
+		try {
+			const videoInfo = await youtube.getInfo(id);
+			const audioLink = videoInfo.chooseFormat({
+				type: 'audio',
+				quality: 'best'
+			});
+
+			return res.status(200).json({link: audioLink.decipher(youtube.session.player)});
 		} catch (e) {
-			return res.status(404).json(new APIError(404, ['no such resource'], ApiErrorType.NoResource));
+			return res.status(404).json(new ApiError(404, ['no such resource'], ApiErrorType.NoResource));
 		}
 	}
 }

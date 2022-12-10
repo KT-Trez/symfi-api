@@ -2,9 +2,11 @@ import express from 'express';
 import {Innertube, UniversalCache} from 'youtubei.js';
 import validateRequestErrors from '../tools/validateRequestErrors';
 import APIError from '../classes/ApiError';
+import ApiError from '../classes/ApiError';
 import MediaInfo from '../classes/MediaInfo';
 import Video from 'youtubei.js/dist/src/parser/classes/Video';
 import {ApiErrorType} from '../../typings/enums';
+import Logger, {LogLevel} from '../classes/Logger';
 
 
 export default class searchController {
@@ -22,7 +24,10 @@ export default class searchController {
 			type: 'video'
 		});
 
-		if (search.videos.length > 0)
+		try {
+			if (search.videos.length <= 0)
+				return res.status(404).json(new APIError(404, ['no such resource'], ApiErrorType.NoResource));
+
 			return res.status(200).json(
 				search.videos.map((video: Video) => new MediaInfo({
 					channel: {
@@ -47,7 +52,9 @@ export default class searchController {
 					title: video.title.text
 				}))
 			);
-
-		return res.status(404).json(new APIError(404, ['no such resource'], ApiErrorType.NoResource));
+		} catch (err) {
+			Logger.log(err.message, LogLevel.Warning);
+			res.status(500).send(new ApiError(500, [err.message], ApiErrorType.InternalError));
+		}
 	}
 }

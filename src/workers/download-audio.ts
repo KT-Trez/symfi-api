@@ -1,9 +1,21 @@
 import fs from 'fs';
 import {parentPort, workerData} from 'worker_threads';
 import {Innertube, UniversalCache} from 'youtubei.js';
-import {LogLevel} from '../../typings/enums.js';
-import * as path from 'path';
+import path from 'path';
+import Logger, {LogLevel} from '../classes/Logger';
 
+
+/**
+ * Sends a message to main thread, using parentPort API.
+ * @param messageType - the message type.
+ * @param messagePayload - the message data.
+ */
+const messageMainThread = (messageType: 'end' | 'error', messagePayload: object) => {
+	parentPort.postMessage({
+		...messagePayload,
+		type: messageType
+	});
+};
 
 /**
  * Converts stream to iterable chunks.
@@ -32,32 +44,36 @@ const downloadAudio = async () => {
 	const youtube = await Innertube.create({
 		cache: new UniversalCache()
 	});
-	const videoID = workerData.videoID;
+	const mediaID = workerData.videoID;
 
-	const stream = await youtube.download(videoID, {
-		type: 'audio',
-		quality: 'best'
-	});
+	try {
+		const stream = await youtube.download(mediaID, {
+			type: 'audio',
+			quality: 'best'
+		});
 
-	const mediaCacheDirPath = path.resolve('cache');
-	if (!fs.existsSync(mediaCacheDirPath))
-		fs.mkdirSync(mediaCacheDirPath);
+		const mediaCacheDirPath = path.resolve('cache');
+		if (!fs.existsSync(mediaCacheDirPath))
+			fs.mkdirSync(mediaCacheDirPath);
 
-	const mediaPath = path.join(mediaCacheDirPath, `${videoID}.wav`);
-	const mediaFile = fs.createWriteStream(mediaPath);
+		const mediaPath = path.join(mediaCacheDirPath, `${mediaID}.wav`);
+		const mediaFile = fs.createWriteStream(mediaPath);
 
-	for await (const chunk of streamToIterable(stream))
-		mediaFile.write(chunk);
+		const onStreamClose = () => {
+			Logger.log('resource downloaded: ' + mediaID);
+			messageMainThread('end', {path: mediaPath});
+			process.exit();
+		};
+		mediaFile.on('close', onStreamClose);
 
-	if (parseInt(process.env.LOG_LEVEL) > LogLevel.DEBUG)
-		console.info('downloaded video: ' + videoID, new Date());
-
-	parentPort.postMessage({
-		path: mediaPath,
-		type: 'end'
-	});
-
-	process.exit();
+		for await (const chunk of streamToIterable(stream))
+			mediaFile.write(chunk);
+		mediaFile.close();
+	} catch (err) {
+		Logger.log(err.message, LogLevel.Error);
+		messageMainThread('error', {error: new Error(err.message, {cause: err.cause})});
+		process.exit();
+	}
 };
 
 downloadAudio();

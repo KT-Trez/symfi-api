@@ -6,6 +6,7 @@ import {param} from 'express-validator';
 const router = express.Router();
 
 router.get(['/youtube', '/youtube/:id'],
+	// todo: check if id is correct
 	param('id', 'missing param').exists().isString(),
 	mediaController.youtube);
 

@@ -6,7 +6,8 @@ import contentController from '../controllers/contentController';
 const router = express.Router();
 
 router.get(['/youtube', '/youtube/:id'],
-	param('id', 'missing param').not().isEmpty().isString(),
+	// todo: check if id is correct
+	param('id', 'missing param').exists().isString(),
 	contentController.youtube);
 
 export {
