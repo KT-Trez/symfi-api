@@ -9,7 +9,7 @@ import Logger, {LogLevel} from './classes/Logger';
 import {v2Router} from './routes/v2';
 
 
-const app: Express = express();
+let app: Express;
 const cache: FileSystemCache = Cache({
 	basePath: path.resolve('cache'),
 	extension: '.tmp',
@@ -36,6 +36,9 @@ const musicly_lib = {
 };
 
 function start({logLevel, maxWorkersCount, port, useLocal}: Lib.StartConfig) {
+	if (!app)
+		app = express();
+
 	server = app.listen(port, () => {
 		Logger.log('Server started - :' + port, LogLevel.Success);
 	});

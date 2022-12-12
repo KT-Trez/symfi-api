@@ -1,2 +1,14 @@
+# config
+/.editorconfig
+/tsconfig.json
+
+# editors
+/.idea/
+
+# source
 /src/
+/test/
 /typings/
+
+# temp files
+/cache/

@@ -44,8 +44,8 @@
       "src"
     ]
   },
-  "name": "musicly_lib",
-  "private": true,
+  "name": "@musicly/lib",
+  "private": false,
   "repository": {
     "type": "git",
     "url": "github:KT-Trez/musicly_lib"
