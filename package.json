@@ -58,5 +58,5 @@
     "test": "mocha --config package.json --no-warnings"
   },
   "types": "bundle/src/index.d.ts",
-  "version": "2.1.0-alpha.0"
+  "version": "3.0.0"
 }
