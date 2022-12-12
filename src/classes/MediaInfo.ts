@@ -1,4 +1,4 @@
-import {Lib} from '../../typings';
+import {Lib} from '../../typings/module';
 
 
 interface MediaInfoConstructor extends Lib.MediaInfo {

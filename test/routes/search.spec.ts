@@ -1,12 +1,12 @@
 import chai from 'chai';
 import chaiHttp from 'chai-http';
-import musicly_lib, {app} from '../../src';
+import lib, {app} from '../../src';
 import expectErrorResponse from '../helper/tools/expectErrorResponse.js';
 
 
 chai.should();
 chai.use(chaiHttp);
-musicly_lib.start({useLocal: true, port: 5000});
+lib.start({useLocal: true, port: 5000});
 
 
 describe('Test \'search\' endpoint', () => {
@@ -31,8 +31,4 @@ describe('Test \'search\' endpoint', () => {
 				});
 		});
 	});
-});
-
-after(() => {
-	musicly_lib.stop();
 });

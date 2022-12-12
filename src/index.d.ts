@@ -1,29 +1,21 @@
 import {EventEmitter} from 'events';
+import express from 'express';
 import {Musicly} from '../typings';
-import musicly_lib from './index';
-
-
-// interfaces
-interface StartConfig {
-	logLevel?: number;
-	maxWorkersCount?: number;
-	useLocal?: boolean;
-	port: number;
-}
-
+import {Lib} from '../typings/module';
+import musicly_lib, {app} from './index';
 
 // variables
-declare const musicly_lib = {
+declare const lib = {
 	emitter,
 	start,
-	stop
+	use
 };
 
 
 // functions
-declare function start(config: StartConfig): void;
+declare function start(config: Lib.StartConfig): void;
 
-declare function stop(): void;
+declare function use(cb: (req: express.Request, res: express.Response) => void): void;
 
 
 // exports

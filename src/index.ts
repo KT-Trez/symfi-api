@@ -2,21 +2,21 @@ import cors from 'cors';
 import {EventEmitter} from 'events';
 import express, {Express} from 'express';
 import Cache, {FileSystemCache} from 'file-system-cache';
-import {Server} from 'http';
 import path from 'path';
-import {Lib} from '../typings';
+import {Lib} from '../typings/module';
 import Logger, {LogLevel} from './classes/Logger';
 import {v2Router} from './routes/v2';
 
 
-let app: Express;
+const app: Express = express();
+let appON = false;
 const cache: FileSystemCache = Cache({
 	basePath: path.resolve('cache'),
 	extension: '.tmp',
 	ns: 'media'
 });
+const customHandlers: ((req: express.Request, res: express.Response) => void)[] = [];
 const emitter = new EventEmitter();
-let server: Server;
 
 
 app.use(cors());
@@ -27,32 +27,46 @@ app.use((req, res, next) => {
 	next();
 });
 
+// load custom handlers passed to the lib
+app.use((req, res, next) => {
+	for (const customHandler of customHandlers)
+		customHandler(req, res);
+	next();
+});
+
 app.use('/v2', v2Router);
 
-const musicly_lib = {
+const lib = {
 	emitter,
 	start,
-	stop
+	use
 };
 
-function start({logLevel, maxWorkersCount, port, useLocal}: Lib.StartConfig) {
-	if (!app)
-		app = express();
+function start({cachePath, logLevel, maxWorkersCount, port, useLocal}: Lib.StartConfig) {
+	if (appON)
+		return;
 
-	server = app.listen(port, () => {
+	if (cachePath)
+		cache.basePath = cachePath;
+
+	app.listen(port, () => {
 		Logger.log('Server started - :' + port, LogLevel.Success);
 	});
 
 	process.env.LOG_LEVEL = logLevel?.toString();
 	process.env.MAX_WORKER_COUNT = maxWorkersCount?.toString();
 	process.env.USE_LOCAL = useLocal?.toString();
+
+	appON = true;
 }
 
-function stop() {
-	server.close();
+function use(cb: (req: express.Request, res: express.Response) => void) {
+	if (!app)
+		throw Error('can\'t register a handler', {cause: 'server not started'});
+	customHandlers.push(cb);
 }
 
-export default musicly_lib;
+export default lib;
 
 export {
 	app,

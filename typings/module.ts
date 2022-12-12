@@ -1,5 +1,6 @@
 export declare module Lib {
 	export interface StartConfig {
+		cachePath?: string;
 		logLevel?: number;
 		maxWorkersCount?: number;
 		useLocal?: boolean;
