@@ -1,4 +1,5 @@
 import moment from 'moment';
+import musicly_lib from '../index';
 
 
 export enum LogLevel {
@@ -44,7 +45,10 @@ export default class Logger {
 	}
 
 	public static log(message: string, level: LogLevel = LogLevel.Info, format: string = 'HH:mm:ss • MM/DD/YYYY', color?: LogLevel) {
+		// todo: add events' types
+
+		const log = `${moment().format(format)} ${this.insertSpaces(this.labels.get(level))}[${color ?? this.colors.get(level).fg}${this.labels.get(level).toUpperCase()}\u001b[0m] ${message}`;
 		if (level <= (parseInt(process.env.LOG_LEVEL) ?? 0))
-			console.log(`${moment().format(format)} ${this.insertSpaces(this.labels.get(level))}[${color ?? this.colors.get(level).fg}${this.labels.get(level).toUpperCase()}\u001b[0m] ${message}`);
+			musicly_lib.emitter.emit('app:log', log);
 	}
 }

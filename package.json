@@ -6,7 +6,7 @@
   },
   "bugs": {
     "email": "kt.bugs@onet.pl",
-    "url": "https://github.com/KT-Trez/musicly_server/issues"
+    "url": "https://github.com/KT-Trez/musicly_lib/issues"
   },
   "dependencies": {
     "cors": "^2.8.5",
@@ -30,7 +30,7 @@
     "typescript": "^4.9.4"
   },
   "license": "MIT",
-  "main": "dist/src/server.js",
+  "main": "bundle/src/index.js",
   "mocha": {
     "extensions": [
       "ts",
@@ -44,18 +44,19 @@
       "src"
     ]
   },
-  "name": "musicly_server",
+  "name": "musicly_lib",
   "private": true,
   "repository": {
     "type": "git",
-    "url": "github:KT-Trez/musicly_server"
+    "url": "github:KT-Trez/musicly_lib"
   },
   "scripts": {
     "build": "tsc",
     "build-watch": "tsc -w",
-    "start": "node dist/src/server.js",
+    "start": "node bundle/src/index.js",
     "start-watch": "nodemon",
     "test": "mocha --config package.json --no-warnings"
   },
+  "types": "bundle/src/index.d.ts",
   "version": "2.1.0-alpha.0"
 }

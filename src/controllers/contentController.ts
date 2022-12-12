@@ -1,13 +1,14 @@
 import {EventEmitter} from 'events';
 import express from 'express';
 import fs from 'fs';
+import path from 'path';
+import {ApiErrorType} from '../../typings/enums';
+import {Workers} from '../../typings/workers';
+import ApiError from '../classes/ApiError';
+import Logger, {LogLevel} from '../classes/Logger';
+import {cache} from '../index';
 import WorkerService from '../services/WorkerService.js';
 import validateRequestErrors from '../tools/validateRequestErrors';
-import {Workers} from '../../typings/workers';
-import {ApiErrorType} from '../../typings/enums';
-import ApiError from '../classes/ApiError';
-import {cache} from '../server.js';
-import Logger, {LogLevel} from '../classes/Logger';
 
 
 class Queue {
@@ -92,7 +93,7 @@ export default class contentController {
 		};
 		try {
 			// push new download worker to workers queue
-			WorkerService.addToQueue({videoID: mediaID}, './dist/src/workers/download-audio', onMessage);
+			WorkerService.addToQueue({videoID: mediaID}, path.resolve(__dirname, '../workers/download-audio.js'), onMessage);
 		} catch (err) {
 			Logger.log(err.message, LogLevel.Warning);
 			res.status(500).send(new ApiError(500, [err.message], ApiErrorType.InternalError));
