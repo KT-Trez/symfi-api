@@ -1,5 +1,5 @@
 import moment from 'moment';
-import lib from '../index';
+import Server from './Server.js';
 
 
 export enum LogLevel {
@@ -46,8 +46,9 @@ export default class Logger {
 
 	public static log(message: string, level: LogLevel = LogLevel.Info, format: string = 'HH:mm:ss • MM/DD/YYYY', color?: LogLevel) {
 		// todo: add events' types
+		// todo: env
 		if (level <= (parseInt(process.env.LOG_LEVEL) ?? 0))
-			lib.emitter.emit('app:log',
+			Server.instance.messenger.emit('app:log',
 				[color ?? this.colors.get(level).fg, '\u001b[0m'],
 				moment().format(format),
 				this.labels.get(level).toUpperCase(),

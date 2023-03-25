@@ -1,11 +1,26 @@
+import express from 'express';
+
 export declare module Lib {
-	export interface StartConfig {
-		cachePath?: string;
-		logLevel?: number;
-		maxWorkersCount?: number;
-		useLocal?: boolean;
-		port: number;
+	export interface Config {
+		cache: {
+			path: string;
+		}
+		download: {
+			useProxy: boolean
+		}
+		express: {
+			port: number
+		},
+		sync: {
+			IDLength: number;
+			storeTimeoutMS: number;
+		}
+		workers: {
+			maxCount: number
+		}
 	}
+
+	export type CustomHandler = ((req: express.Request, res: express.Response) => void);
 
 	export interface MediaInfo {
 		channel: {

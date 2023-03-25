@@ -10,6 +10,13 @@ router.get(['/youtube', '/youtube/:id'],
 	param('id', 'missing param').exists().isString(),
 	contentController.youtube);
 
+router.use(express.json());
+
+router.post('/check',
+	// todo: add body validation
+	// body('id', 'missing param').exists().isString(),
+	contentController.check);
+
 export {
 	router as contentRouter
 };

@@ -2,12 +2,15 @@ import {EventEmitter} from 'events';
 import express from 'express';
 import fs from 'fs';
 import path from 'path';
+import {Innertube} from 'youtubei.js';
 import {ApiErrorType} from '../../typings/enums';
 import {Workers} from '../../typings/workers';
 import ApiError from '../classes/ApiError';
 import Logger, {LogLevel} from '../classes/Logger';
-import {cache} from '../index';
-import WorkerService from '../services/WorkerService.js';
+import MediaInfo from '../classes/MediaInfo';
+import Server from '../classes/Server.js';
+import DownloadManager from '../services/DownloadManager.js';
+import Time from '../tools/Time';
 import validateRequestErrors from '../tools/validateRequestErrors';
 
 
@@ -59,13 +62,58 @@ class Queue {
 }
 
 export default class contentController {
+	public static async check(req: express.Request, res: express.Response) {
+		const ids = req.body;
+
+		const resJSON = [];
+
+		try {
+			for (const id of ids) {
+				// todo: introduce single Innertube instance
+				const video = await (await Innertube.create()).getInfo(id).catch(err => {
+					if (err && err.message !== 'InnertubeError: This video is unavailable')
+						console.error(err);
+				});
+
+				if (video)
+					resJSON.push(new MediaInfo({
+						channel: {
+							id: video.basic_info.channel.id,
+							name: video.basic_info.channel.name,
+							url: video.basic_info.channel.url
+						},
+						description: video.basic_info.short_description,
+						id: video.basic_info.id,
+						metadata: {
+							duration: {
+								label: Time.createTimestamp(video.basic_info.duration, 'seconds'),
+								seconds: video.basic_info.duration
+							},
+							published: video.primary_info.published.text,
+							thumbnails: [video.basic_info.thumbnail[0]],
+							views: {
+								count: video.basic_info.view_count,
+								label: video.primary_info.short_view_count.text
+							}
+						},
+						title: video.basic_info.title
+					}));
+			}
+
+			res.status(200).json(resJSON);
+		} catch (err) {
+			Logger.log(err.message, LogLevel.Warning);
+			res.status(500).send(new ApiError(500, [err.message], ApiErrorType.InternalError));
+		}
+	}
+
 	public static async youtube(req: express.Request, res: express.Response) {
 		if (validateRequestErrors(req, res))
 			return;
 
 		// get media id and path to resource if it's cached
 		const mediaID = decodeURI(req.params.id);
-		const cachedPath = cache.getSync(mediaID);
+		const cachedPath = Server.instance.cache.getSync(mediaID);
 
 		// function that streams media resource to client
 		const streamAudio = () => fs.createReadStream(cachedPath).pipe(res);
@@ -82,7 +130,7 @@ export default class contentController {
 		const onMessage = (message: Workers.ParentPort.DownloadAudio) => {
 			switch (message.type) {
 				case 'end':
-					cache.set(mediaID, message.path);
+					Server.instance.cache.set(mediaID, message.path);
 					Queue.announceResourceAvailable(mediaID);
 					fs.createReadStream(message.path).pipe(res);
 					break;
@@ -93,7 +141,7 @@ export default class contentController {
 		};
 		try {
 			// push new download worker to workers queue
-			WorkerService.addToQueue({videoID: mediaID}, path.resolve(__dirname, '../workers/download-audio.js'), onMessage);
+			DownloadManager.addToQueue({videoID: mediaID}, path.resolve(__dirname, '../workers/download-audio.js'), onMessage);
 		} catch (err) {
 			Logger.log(err.message, LogLevel.Warning);
 			res.status(500).send(new ApiError(500, [err.message], ApiErrorType.InternalError));

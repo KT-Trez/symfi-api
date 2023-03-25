@@ -7,7 +7,7 @@
 
 # source
 /src/
-/test/
+/tests/
 /typings/
 
 # temp files

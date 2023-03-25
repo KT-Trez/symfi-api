@@ -1,8 +1,9 @@
 import express from 'express';
-import validateRequestErrors from '../tools/validateRequestErrors';
 import {Innertube, UniversalCache} from 'youtubei.js';
 import {ApiErrorType} from '../../typings/enums';
 import ApiError from '../classes/ApiError';
+import Server from '../classes/Server.js';
+import validateRequestErrors from '../tools/validateRequestErrors';
 
 
 export default class mediaController {
@@ -14,7 +15,7 @@ export default class mediaController {
 		const id = req.params.id;
 
 		// redirect request to the local endpoint that streams audio
-		if (process.env.USE_LOCAL)
+		if (Server.instance.config.download.useProxy)
 			return res.status(200).json({link: `${req.protocol}://${req.get('host')}/v2/content/youtube/${id}`});
 
 		// search instance of the YouTube's API
