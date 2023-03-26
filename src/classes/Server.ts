@@ -36,20 +36,20 @@ export default class Server {
 	configure(config: Partial<Lib.Config>) {
 		const defaultConfig: Lib.Config = {
 			cache: {
-				path: path.resolve(process.env.npm_package_config_cache_path)
+				path: path.resolve('cache')
 			},
 			download: {
-				useProxy: /true/.test(process.env.npm_package_config_download_useProxy)
+				useProxy: false
 			},
 			express: {
-				port: parseInt(process.env.npm_package_config_express_port)
+				port: 3000
 			},
 			sync: {
-				IDLength: parseInt(process.env.npm_package_config_sync_IDLength),
-				storeTimeoutMS: parseInt(process.env.npm_package_config_sync_storeTimeoutMS)
+				IDLength: 6,
+				storeTimeoutMS: 1000 * 60 * 60 * 24
 			},
 			workers: {
-				maxCount: parseInt(process.env.npm_package_config_workers_maxCount)
+				maxCount: 10
 			}
 		};
 
@@ -74,6 +74,7 @@ export default class Server {
 				fs.mkdirSync(cachePath);
 
 			this.config.cache.path = cachePath;
+			Logger.log(`Provided cache path unavailable, using fallback: ${cachePath}`, LogLevel.Warning);
 		} finally {
 			this.cache = Cache({
 				basePath: cachePath,
