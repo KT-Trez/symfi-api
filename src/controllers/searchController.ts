@@ -6,12 +6,12 @@ import ApiError from '../classes/ApiError';
 import APIError from '../classes/ApiError';
 import Logger, {LogLevel} from '../classes/Logger';
 import MediaInfo from '../classes/MediaInfo';
-import validateRequestErrors from '../tools/validateRequestErrors';
+import isRequestInvalid from '../tools/isRequestInvalid.js';
 
 
 export default class searchController {
 	static async youtube(req: express.Request, res: express.Response) {
-		if (validateRequestErrors(req, res))
+		if (isRequestInvalid(req, res))
 			return;
 
 		const query = decodeURI(req.query.query.toString());

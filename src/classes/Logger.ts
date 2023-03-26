@@ -47,12 +47,12 @@ export default class Logger {
 	public static log(message: string, level: LogLevel = LogLevel.Info, format: string = 'HH:mm:ss • MM/DD/YYYY', color?: LogLevel) {
 		// todo: add events' types
 		// todo: env
-		if (level <= (parseInt(process.env.LOG_LEVEL) ?? 0))
-			Server.instance.messenger.emit('app:log',
-				[color ?? this.colors.get(level).fg, '\u001b[0m'],
-				moment().format(format),
-				this.labels.get(level).toUpperCase(),
-				message,
-				this.insertSpaces(this.labels.get(level)));
+		// if (level <= (parseInt(process.env.LOG_LEVEL) ?? 0))
+		Server.instance.messenger.emit('app:log',
+			[color ?? this.colors.get(level).fg, '\u001b[0m'],
+			moment().format(format),
+			this.labels.get(level).toUpperCase(),
+			message,
+			this.insertSpaces(this.labels.get(level)));
 	}
 }

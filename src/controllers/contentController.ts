@@ -2,6 +2,7 @@ import {EventEmitter} from 'events';
 import express from 'express';
 import fs from 'fs';
 import path from 'path';
+import {getVideoInfo} from 'youtube-video-exists';
 import {Innertube} from 'youtubei.js';
 import {ApiErrorType} from '../../typings/enums';
 import {Workers} from '../../typings/workers';
@@ -10,8 +11,8 @@ import Logger, {LogLevel} from '../classes/Logger';
 import MediaInfo from '../classes/MediaInfo';
 import Server from '../classes/Server.js';
 import DownloadManager from '../services/DownloadManager.js';
+import isRequestInvalid from '../tools/isRequestInvalid.js';
 import Time from '../tools/Time';
-import validateRequestErrors from '../tools/validateRequestErrors';
 
 
 class Queue {
@@ -63,41 +64,41 @@ class Queue {
 
 export default class contentController {
 	public static async check(req: express.Request, res: express.Response) {
-		const ids = req.body;
+		if (isRequestInvalid(req, res))
+			return;
 
+		const ids = req.body;
 		const resJSON = [];
 
 		try {
 			for (const id of ids) {
-				// todo: introduce single Innertube instance
-				const video = await (await Innertube.create()).getInfo(id).catch(err => {
-					if (err && err.message !== 'InnertubeError: This video is unavailable')
-						console.error(err);
-				});
+				if (!(await getVideoInfo(id)).existing)
+					continue;
 
-				if (video)
-					resJSON.push(new MediaInfo({
-						channel: {
-							id: video.basic_info.channel.id,
-							name: video.basic_info.channel.name,
-							url: video.basic_info.channel.url
+				// todo: introduce single Innertube instance
+				const video = await (await Innertube.create()).getInfo(id);
+				resJSON.push(new MediaInfo({
+					channel: {
+						id: video.basic_info.channel.id,
+						name: video.basic_info.channel.name,
+						url: video.basic_info.channel.url
+					},
+					description: video.basic_info.short_description,
+					id: video.basic_info.id,
+					metadata: {
+						duration: {
+							label: Time.createTimestamp(video.basic_info.duration, 'seconds'),
+							seconds: video.basic_info.duration
 						},
-						description: video.basic_info.short_description,
-						id: video.basic_info.id,
-						metadata: {
-							duration: {
-								label: Time.createTimestamp(video.basic_info.duration, 'seconds'),
-								seconds: video.basic_info.duration
-							},
-							published: video.primary_info.published.text,
-							thumbnails: [video.basic_info.thumbnail[0]],
-							views: {
-								count: video.basic_info.view_count,
-								label: video.primary_info.short_view_count.text
-							}
-						},
-						title: video.basic_info.title
-					}));
+						published: video.primary_info.published.text,
+						thumbnails: [video.basic_info.thumbnail[0]],
+						views: {
+							count: video.basic_info.view_count,
+							label: video.primary_info.short_view_count.text
+						}
+					},
+					title: video.basic_info.title
+				}));
 			}
 
 			res.status(200).json(resJSON);
@@ -108,7 +109,7 @@ export default class contentController {
 	}
 
 	public static async youtube(req: express.Request, res: express.Response) {
-		if (validateRequestErrors(req, res))
+		if (isRequestInvalid(req, res))
 			return;
 
 		// get media id and path to resource if it's cached

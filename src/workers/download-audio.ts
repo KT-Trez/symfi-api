@@ -1,8 +1,7 @@
 import fs from 'fs';
+import path from 'path';
 import {parentPort, workerData} from 'worker_threads';
 import {Innertube, UniversalCache} from 'youtubei.js';
-import path from 'path';
-import Logger, {LogLevel} from '../classes/Logger';
 
 
 /**
@@ -60,7 +59,8 @@ const downloadAudio = async () => {
 		const mediaFile = fs.createWriteStream(mediaPath);
 
 		const onStreamClose = () => {
-			Logger.log('resource downloaded: ' + mediaID);
+			// todo: return by message port
+			// Logger.log('resource downloaded: ' + mediaID);
 			messageMainThread('end', {path: mediaPath});
 			process.exit();
 		};
@@ -70,7 +70,8 @@ const downloadAudio = async () => {
 			mediaFile.write(chunk);
 		mediaFile.close();
 	} catch (err) {
-		Logger.log(err.message, LogLevel.Error);
+		// todo: return by message port
+		// Logger.log(err.message, LogLevel.Error);
 		messageMainThread('error', {error: new Error(err.message, {cause: err.cause})});
 		process.exit();
 	}

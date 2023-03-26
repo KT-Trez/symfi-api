@@ -1,7 +1,7 @@
-import {APIErrorType} from '../../../typings/enums.js';
-import expectServerError from './expectServerError.js';
+import {ApiErrorCode, ApiErrorType} from '../../../typings/enums';
+import expectServerError from './expectServerError';
 
 
-export default function expectIncorrectBody(res: any, incorrectBodyErrorsQuantity: number) {
-	expectServerError(res, 400, 400, APIErrorType.InvalidRequest, incorrectBodyErrorsQuantity);
+export default function expectIncorrectBody(res: any) {
+	expectServerError(res, ApiErrorCode.InvalidBody, 400, ApiErrorType.InvalidRequest);
 }

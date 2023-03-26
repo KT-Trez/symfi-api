@@ -3,12 +3,12 @@ import {Innertube, UniversalCache} from 'youtubei.js';
 import {ApiErrorType} from '../../typings/enums';
 import ApiError from '../classes/ApiError';
 import Server from '../classes/Server.js';
-import validateRequestErrors from '../tools/validateRequestErrors';
+import isRequestInvalid from '../tools/isRequestInvalid.js';
 
 
 export default class mediaController {
 	static async youtube(req: express.Request, res: express.Response) {
-		if (validateRequestErrors(req, res))
+		if (isRequestInvalid(req, res))
 			return;
 
 		// the media's id

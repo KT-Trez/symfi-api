@@ -12,24 +12,24 @@ import CustomHandler = Lib.CustomHandler;
 
 export default class Server {
 	static #customHandlers: CustomHandler[] = [];
-	static #instance: Server;
+	static _instance: Server;
 
 	public static use(cb: (req: express.Request, res: express.Response) => void) {
 		this.#customHandlers.push(cb);
 	}
 
 	public static get instance() {
-		if (!this.#instance)
-			this.#instance = new Server();
-		return this.#instance;
+		if (!this._instance)
+			this._instance = new Server();
+		return this._instance;
 	}
 
-	app: Express;
+	readonly app: Express;
 	cache: FileSystemCache;
 	config?: Partial<Lib.Config>;
 	messenger: EventEmitter;
 
-	constructor() {
+	private constructor() {
 		this.app = express();
 	}
 
@@ -109,6 +109,7 @@ export default class Server {
 
 	#startExpress() {
 		this.app.listen(this.config.express.port, () => {
+			// console.log('Server started');
 			// Logger.log('Server started - :' + this.app.locals, LogLevel.Success)
 		});
 	}
