@@ -1,6 +1,6 @@
 import express from 'express';
 import {Innertube, UniversalCache} from 'youtubei.js';
-import {ApiErrorType} from '../../typings/enums';
+import {ApiErrorType} from '../../types/enums';
 import ApiError from '../classes/ApiError';
 import Server from '../classes/Server.js';
 import isRequestInvalid from '../tools/isRequestInvalid.js';

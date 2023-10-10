@@ -1,6 +1,6 @@
 import express from 'express';
 import {ValidationError, validationResult} from 'express-validator';
-import {ApiErrorCode, ApiErrorType} from '../../typings/enums';
+import {ApiErrorCode, ApiErrorType} from '../../types/enums';
 import ApiError from '../classes/ApiError';
 
 

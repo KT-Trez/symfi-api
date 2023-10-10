@@ -5,7 +5,7 @@ import Cache, {FileSystemCache} from 'file-system-cache';
 import fs from 'fs';
 import os from 'os';
 import path from 'path';
-import {Lib} from '../../typings/module.js';
+import {Lib} from '../../types/module.js';
 import {v2Router} from '../routes/v2.js';
 import Logger, {LogLevel} from './Logger.js';
 import CustomHandler = Lib.CustomHandler;

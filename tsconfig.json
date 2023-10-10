@@ -1,23 +1,25 @@
 {
   "compilerOptions": {
-    "allowSyntheticDefaultImports": true,
-    "declaration": true,
-    "declarationMap": true,
+    "allowJs": false,
+    "forceConsistentCasingInFileNames": true,
+    "lib": [
+      "es2022"
+    ],
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
+    "moduleDetection": "force",
     "noImplicitAny": true,
-    "outDir": "bundle",
+    "noUncheckedIndexedAccess": true,
+    "outDir": "dist",
     "skipLibCheck": true,
     "sourceMap": true,
-    "target": "es2022"
+    "strict": true,
+    "target": "ES2022"
   },
   "exclude": [
-    "gen",
-    "node_modules",
-    "tests"
+    "node_modules"
   ],
   "include": [
-    "src",
-    "typings"
+    "src"
   ]
 }

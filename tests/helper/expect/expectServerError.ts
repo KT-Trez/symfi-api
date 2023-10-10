@@ -1,5 +1,5 @@
 import {expect} from 'chai';
-import {ApiErrorType} from '../../../typings/enums.js';
+import {ApiErrorType} from '../../../types/enums.js';
 
 
 export default function expectServerError(res: any, code: number, status: number, errorType: ApiErrorType, errorsLength?: number) {

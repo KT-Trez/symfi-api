@@ -1,4 +1,4 @@
-import {ApiErrorType} from '../../typings/enums';
+import {ApiErrorType} from '../../types/enums';
 
 
 export default class ApiError {

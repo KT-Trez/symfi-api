@@ -1,4 +1,4 @@
-import {ApiErrorCode, ApiErrorType} from '../../../typings/enums.js';
+import {ApiErrorCode, ApiErrorType} from '../../../types/enums.js';
 import expectServerError from './expectServerError.js';
 
 

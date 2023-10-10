@@ -1,7 +1,7 @@
 import express from 'express';
 import {Innertube} from 'youtubei.js';
 import Video from 'youtubei.js/dist/src/parser/classes/Video';
-import {ApiErrorType} from '../../typings/enums';
+import {ApiErrorType} from '../../types/enums';
 import ApiError from '../classes/ApiError';
 import APIError from '../classes/ApiError';
 import Logger, {LogLevel} from '../classes/Logger';

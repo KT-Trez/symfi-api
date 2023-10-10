@@ -1,11 +1,10 @@
-import {EventEmitter} from 'events';
 import express from 'express';
 import fs from 'fs';
 import path from 'path';
 import {getVideoInfo} from 'youtube-video-exists';
 import {Innertube} from 'youtubei.js';
-import {ApiErrorType} from '../../typings/enums';
-import {Workers} from '../../typings/workers';
+import {ApiErrorType} from '../../types/enums';
+import {Workers} from '../../types/workers';
 import ApiError from '../classes/ApiError';
 import Logger, {LogLevel} from '../classes/Logger';
 import MediaInfo from '../classes/MediaInfo';
