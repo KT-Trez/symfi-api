@@ -4,9 +4,9 @@ import fs from 'fs';
 import {before, beforeEach} from 'mocha';
 import path from 'path';
 import {Musicly_Server} from '../bundle/src/index';
-import expectFilesInCache from './helper/expect/expectFilesInCache';
 import expectIncorrectBody from './helper/expect/expectIncorrectBody';
 import expectIncorrectPath from './helper/expect/expectIncorrectPath';
+import expectMusicInCache from './helper/expect/expectMusicInCache';
 
 
 chai.should();
@@ -28,7 +28,7 @@ before(() => {
 
 describe('Test \'content\' endpoint', () => {
 	describe('GET /content/youtube', () => {
-		const audioIDs = ['dQw4w9WgXcQ', '_6KZI74zKfE'];
+		const audioIDs = ['dQw4w9WgXcQ', '_6KZI74zKfE', 'ElbwUEJvOP8', '29ryqQIGju4', 'LaQj636PJh0'];
 
 		beforeEach(() => {
 			const cacheContent = fs.readdirSync(Musicly_Server.instance.config.cache.path);
@@ -39,54 +39,38 @@ describe('Test \'content\' endpoint', () => {
 		it('It should download an audio file', async () => {
 			const res = await chai.request(app).get(`/v2/content/youtube/${audioIDs[0]}`);
 			res.should.have.status(200);
-			expectFilesInCache();
+			expectMusicInCache([audioIDs[0]]);
 		}).timeout(5000);
 
 		it('It should download an audio file, multiple times', async () => {
-			let counter = 0;
-			await new Promise<void>(resolve => {
-				for (let i = 0; i < 5; i++)
-					chai.request(app)
-						.get(`/v2/content/youtube/${audioIDs[0]}`)
-						.end((err, res) => {
-							res.should.have.status(200);
+			const requestSong = async () => {
+				const res = await chai.request(app).get(`/v2/content/youtube/${audioIDs[0]}`);
+				if (res.status !== 200)
+					await Promise.reject(`YouTube API responded with status: ${res.status}`);
+			};
+			
+			const requests: Promise<void>[] = [];
+			for (let i = 0; i < 5; i++)
+				requests.push(requestSong());
+			await Promise.all(requests);
 
-							counter++;
-							if (counter === 5)
-								resolve();
-						});
-			});
-
-			expectFilesInCache();
+			expectMusicInCache([audioIDs[0]]);
 		}).timeout(5000);
 
-		it('It should download two different audio files at once', async () => {
-			let counter = 0;
-			await new Promise<void>(resolve => {
-				for (let i = 0; i < 3; i++)
-					chai.request(app)
-						.get(`/v2/content/youtube/${audioIDs[0]}`)
-						.end((err, res) => {
-							res.should.have.status(200);
+		it('It should download multiple different audio files at once', async () => {
+			const requestSong = async (id: string) => {
+				const res = await chai.request(app).get(`/v2/content/youtube/${id}`);
+				if (res.status !== 200)
+					await Promise.reject(`YouTube API responded with status: ${res.status}`);
+			};
 
-							counter++;
-							if (counter === 4)
-								resolve();
-						});
+			const requests: Promise<void>[] = [];
+			for (const audioID of audioIDs)
+				requests.push(requestSong(audioID));
+			await Promise.all(requests);
 
-				chai.request(app)
-					.get(`/v2/content/youtube/${audioIDs[1]}`)
-					.end((err, res) => {
-						res.should.have.status(200);
-
-						counter++;
-						if (counter === 4)
-							resolve();
-					});
-			});
-
-			expectFilesInCache();
-		}).timeout(5000);
+			expectMusicInCache(audioIDs);
+		}).timeout(120000);
 
 		it('It should return an error about incorrect path', async () => {
 			const res = await chai.request(app).get(`/v2/content/youtube/`);

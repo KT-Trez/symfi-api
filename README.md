@@ -19,7 +19,7 @@ Musicly_Server.use(callback: (req: express.Request, res: express.Response) => vo
 #### Returns
 * void
 
-### Example
+#### Example
 ```typescript
 Musicly_Server.use((req: express.Request, res: express.Response) => {
 	console.log('New request arrived! Path: ' + req.path);
@@ -43,7 +43,7 @@ Musicly_Server.instance.configure(config: Partial<Lib.Config>): Server;
 #### Returns
 * [Server](./src/classes/Server.ts) instance
 
-### Example
+#### Example
 
 ```typescript
 import path from 'path';
@@ -84,7 +84,7 @@ Musicly_Server.instance.start(): void;
 #### Returns
 * void
 
-### Example
+#### Example
 ```typescript
 const server = Musicly_Server.instance;
 server.start();
