@@ -1,5 +1,1 @@
-import Server from './classes/Server';
-
-export {
-	Server
-};
+export { Server } from './resources/Server';
