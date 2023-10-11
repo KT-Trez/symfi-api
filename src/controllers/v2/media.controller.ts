@@ -11,7 +11,7 @@ const getMediaURL = async (
   const id = req.params.id;
 
   // redirect request to the local endpoint that streams audio
-  if (Server.instance.config.download.useProxy)
+  if (Server.instance.config.downloadThroughProxy)
     return res.status(200).json({
       link: `${req.protocol}://${req.get('host')}/v2/content/youtube/${id}`,
     });

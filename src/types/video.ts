@@ -1,14 +1,10 @@
+import type { Thumbnail } from './mediaInfo';
+
 export type Text = {
   isEmpty(): boolean;
   text?: string;
   toHTML(): string | undefined;
   toString(): string;
-};
-
-export type Thumbnail = {
-  height: number;
-  url: string;
-  width: number;
 };
 
 export type Video = {

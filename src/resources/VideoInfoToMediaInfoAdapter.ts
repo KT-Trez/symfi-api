@@ -1,5 +1,4 @@
-import { MediaInfo, Thumbnail } from '../types/mediaInfo';
-import { VideoInfo } from '../types/video';
+import type { MediaInfo, Thumbnail, VideoInfo } from '../types';
 import { ApiError } from './ApiError';
 
 export class VideoInfoToMediaInfoAdapter implements MediaInfo {

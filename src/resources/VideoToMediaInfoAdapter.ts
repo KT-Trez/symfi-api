@@ -1,5 +1,4 @@
-import { MediaInfo, Thumbnail } from '../types/mediaInfo';
-import { Video } from '../types/video';
+import type { MediaInfo, Thumbnail, Video } from '../types';
 
 export class VideoToMediaInfoAdapter implements MediaInfo {
   public channel: { id: string; name: string; url: string };

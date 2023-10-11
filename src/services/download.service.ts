@@ -1,69 +1,63 @@
-import { Worker } from 'worker_threads';
-import { FIFO, Server } from '../resources';
+import fs from 'fs';
+import path from 'path';
+import { ReadableStream } from 'stream/web';
+import { Innertube, UniversalCache } from 'youtubei.js';
 
-type QueueItem = {
-  onMessage?: (...args: unknown[]) => void;
-  workerPath: string;
-  workerData?: object;
-};
+/**
+ * Converts stream to iterable chunks.
+ * @param stream - the stream to convert
+ */
+export async function* streamToIterable(stream: ReadableStream<Uint8Array>) {
+  const reader = stream.getReader();
 
-export class Manager {
-  private static _maxWorkersCount: number;
-  static #queue = new FIFO<QueueItem>();
-  static #workersCount = 0;
-
-  static get #maxWorkersCount(): number {
-    if (!this._maxWorkersCount)
-      this._maxWorkersCount = Server.instance.config.workers.maxCount;
-    return this._maxWorkersCount;
-  }
-
-  public static addToQueue(
-    data: object,
-    path: string,
-    onMessage?: (...args: unknown[]) => void,
-  ) {
-    this.#queue.add({
-      onMessage,
-      workerData: data,
-      workerPath: path,
-    });
-
-    if (this.#checkThreadAvailability()) this.nextInQueue();
-  }
-
-  static #checkThreadAvailability() {
-    return this.#workersCount < this.#maxWorkersCount;
-  }
-
-  static #createWorker(task: QueueItem): Promise<boolean> {
-    const worker = new Worker(task.workerPath, {
-      workerData: task.workerData,
-    });
-
-    return new Promise((resolve, reject) => {
-      worker
-        .on('error', err => {
-          reject(err);
-        })
-        .on('messageerror', err => {
-          reject(err);
-        })
-        .on('exit', code => {
-          if (code !== 0) reject('worker stopped with exit code: ' + code);
-          resolve(true);
-        });
-
-      if (task.onMessage) worker.on('message', task.onMessage);
-    });
-  }
-
-  private static async nextInQueue() {
-    this.#workersCount++;
-    await this.#createWorker(this.#queue.get()!);
-    this.#workersCount--;
-
-    if (this.#queue.size !== 0 && this.#checkThreadAvailability())
-      await this.nextInQueue();
+  try {
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) {
+        return;
+      }
+      yield value;
+    }
+  } finally {
+    reader.releaseLock();
   }
 }
+
+/**
+ * Downloads audio file from YouTube.
+ */
+export const getResource = async (
+  resourceId: string,
+  resourceType: 'audio' | 'video' | 'video+audio' = 'audio',
+): Promise<string> => {
+  const youtube = await Innertube.create({
+    cache: new UniversalCache(false),
+  });
+
+  const stream = await youtube.download(resourceId, {
+    type: resourceType,
+    quality: 'best',
+  });
+
+  const resourceCacheDirPath = path.resolve('cache');
+  if (!fs.existsSync(resourceCacheDirPath)) {
+    fs.mkdirSync(resourceCacheDirPath);
+  }
+
+  const resourcePath = path.join(resourceCacheDirPath, `${resourceId}.wav`);
+  const resource = fs.createWriteStream(resourcePath);
+
+  return await new Promise((resolve, reject) => {
+    resource.on('close', () => resolve(resourcePath));
+    resource.on('error', err => reject(err));
+
+    const execute = async () => {
+      for await (const chunk of streamToIterable(stream)) {
+        resource.write(chunk);
+      }
+      resource.close();
+    };
+
+    execute();
+  });
+};

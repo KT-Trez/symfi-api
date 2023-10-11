@@ -1,18 +1,10 @@
 export type ServerConfig = {
-  cache: {
-    path: string;
-  };
-  download: {
-    useProxy: boolean;
-  };
-  express: {
-    port: number;
-  };
+  appPort: number;
+  cachePath: string;
+  downloadThroughProxy: boolean;
+  maxWorkers: number;
   sync: {
     IDLength: number;
     storeTimeoutMS: number;
-  };
-  workers: {
-    maxCount: number;
   };
 };

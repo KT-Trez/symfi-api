@@ -1,4 +1,4 @@
-/* eslint-disable no-console */
+/* eslint-disable no-console,@typescript-eslint/no-explicit-any */
 import { EventEmitter } from 'events';
 
 export const SEVERITY_CONST = {
@@ -19,9 +19,19 @@ const CONSOLE_COLORS: Record<SEVERITY, string> = {
 
 const LONGEST_LABEL_LENGTH = 7;
 
+// eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
+export declare interface Messenger {
+  on(
+    event: 'message',
+    listener: (severity: SEVERITY, message: string) => void,
+  ): this;
+  on(eventName: string | symbol, listener: (...args: any[]) => void): this;
+}
+
+// eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
 export class Messenger extends EventEmitter {
   message(severity: SEVERITY, text: string, noEmit?: boolean) {
-    const message = `${this.#formatStdOut(severity)} ${text}`;
+    const message = `${this.formatStd(severity)} ${text}`;
 
     switch (severity) {
       case 'ERROR':
@@ -36,7 +46,7 @@ export class Messenger extends EventEmitter {
     }
   }
 
-  #formatStdOut(severity: SEVERITY) {
+  private formatStd(severity: SEVERITY) {
     const timestamp = new Intl.DateTimeFormat('en-GB', {
       day: '2-digit',
       fractionalSecondDigits: 3,

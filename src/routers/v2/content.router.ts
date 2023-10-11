@@ -1,7 +1,8 @@
 import express from 'express';
 import { body, param } from 'express-validator';
 import { Innertube, UniversalCache } from 'youtubei.js';
-import { contentController } from '../../controllers/v2/content.controller';
+import { contentController } from '../../controllers/v2';
+import { requestValidatorService } from '../../services';
 
 const router = express.Router();
 
@@ -21,6 +22,7 @@ router.get(
       return !!(await youtube.getInfo(audioID));
     })
     .withMessage('incorrect id, no such content'),
+  requestValidatorService,
   contentController.streamAudio,
 );
 
@@ -28,10 +30,9 @@ router.use(express.json());
 
 router.post(
   '/check',
-  body()
-    .isArray({ min: 1 })
-    .withMessage('incorrect payload, ids to check should be an array'),
-  contentController.checkIdsCorrectness, // todo: investigate ts error
+  body().isArray({ min: 1 }).withMessage('incorrect payload, ids to check should be an array'),
+  requestValidatorService,
+  contentController.checkIdsCorrectness,
 );
 
 export { router as contentRouter };

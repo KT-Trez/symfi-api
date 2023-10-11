@@ -1,7 +1,8 @@
 import express from 'express';
 import { param } from 'express-validator';
 import { Innertube, UniversalCache } from 'youtubei.js';
-import { mediaController } from '../../controllers/v2/media.controller';
+import { mediaController } from '../../controllers/v2';
+import { requestValidatorService } from '../../services';
 
 const router = express.Router();
 
@@ -21,6 +22,7 @@ router.get(
       return !!(await youtube.getInfo(audioID));
     })
     .withMessage('incorrect id, no such media'),
+  requestValidatorService,
   mediaController.getMediaURL,
 );
 

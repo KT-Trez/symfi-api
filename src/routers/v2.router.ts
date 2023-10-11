@@ -1,7 +1,5 @@
 import express, { Response } from 'express';
-import { contentRouter } from './v2/content.router';
-import { mediaRouter } from './v2/media.router';
-import { searchRouter } from './v2/search.router';
+import { contentRouter, mediaRouter, searchRouter } from './v2';
 
 const router = express.Router();
 
