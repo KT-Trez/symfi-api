@@ -47,5 +47,5 @@
     "start": "npm run build && node dist/index.js"
   },
   "types": "src/types",
-  "version": "3.2.0"
+  "version": "3.3.0"
 }
