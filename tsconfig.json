@@ -1,23 +1,32 @@
 {
   "compilerOptions": {
     "allowJs": false,
+    "declaration": true,
+    "declarationMap": true,
+    "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
+    "inlineSourceMap": false,
     "lib": [
-      "es2022"
+      "ESNext"
     ],
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
-    "moduleDetection": "force",
+    "listEmittedFiles": true,
+    "moduleResolution": "node",
+    "noFallthroughCasesInSwitch": true,
     "noImplicitAny": true,
     "noUncheckedIndexedAccess": true,
-    "outDir": "dist",
+    "pretty": true,
     "skipLibCheck": true,
-    "sourceMap": true,
     "strict": true,
-    "target": "ES2022"
+    "traceResolution": false,
+    "types": [
+      "node",
+      "jest"
+    ]
   },
   "exclude": [
-    "node_modules"
+    "dist",
+    "node_modules",
+    "tests"
   ],
   "include": [
     "src"
