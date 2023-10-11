@@ -6,6 +6,5 @@
 
 # production
 /.env
-/bundle/
 /cache/
-/gen/
+/dist/

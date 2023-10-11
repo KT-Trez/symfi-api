@@ -20,7 +20,6 @@ export class Server {
 
   private constructor() {
     this.app = express();
-    this.cache = this.#createCache();
     this.config = {
       cache: {
         path: path.resolve('cache'),
@@ -39,6 +38,7 @@ export class Server {
         maxCount: 10,
       },
     };
+    this.cache = this.#createCache();
     this.messenger = new Messenger();
   }
 

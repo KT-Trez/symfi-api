@@ -1,3 +1,16 @@
+export type Text = {
+  isEmpty(): boolean;
+  text?: string;
+  toHTML(): string | undefined;
+  toString(): string;
+};
+
+export type Thumbnail = {
+  height: number;
+  url: string;
+  width: number;
+};
+
 export type Video = {
   author: {
     get best_thumbnail(): Thumbnail | undefined;
@@ -22,15 +35,17 @@ export type Video = {
   view_count: Text;
 };
 
-export type Text = {
-  isEmpty(): boolean;
-  text?: string;
-  toHTML(): string | undefined;
-  toString(): string;
-};
-
-export type Thumbnail = {
-  height: number;
-  url: string;
-  width: number;
+export type VideoInfo = {
+  basic_info: {
+    channel: {
+      id: string;
+      name: string;
+      url: string;
+    } | null;
+    duration?: number | undefined;
+    id?: string | undefined;
+    thumbnail?: Thumbnail[];
+    title?: string | undefined;
+    view_count: number | undefined;
+  };
 };
