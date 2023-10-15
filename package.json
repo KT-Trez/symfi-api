@@ -57,5 +57,5 @@
     "dev": "nodemon",
     "start": "npm run build && node dist/index.js"
   },
-  "version": "3.3.0"
+  "version": "3.3.1"
 }
