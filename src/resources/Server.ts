@@ -22,11 +22,12 @@ export class Server {
       storeTimeoutMS: 1000 * 60 * 60 * 24,
     },
   };
-  readonly messenger: Messenger = new Messenger();
+  readonly messenger: Messenger;
 
   private constructor() {
     this.app = express();
     this.cache = this.createCache();
+    this.messenger = new Messenger();
   }
 
   private static _instance: Server;
@@ -68,10 +69,7 @@ export class Server {
       }
 
       this.config.cachePath = cachePath;
-      this.messenger.message(
-        'WARNING',
-        `cache path failed, using fallback: ${cachePath}`,
-      );
+      this.messenger.message('WARNING', `cache path failed, using fallback: ${cachePath}`);
     }
 
     return Cache({
