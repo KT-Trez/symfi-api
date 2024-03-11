@@ -1,0 +1,31 @@
+openapi: 3.0.3
+info:
+  description: Backend service for the Symfi application.
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+  title: Symfi API
+  version: 3.0.0
+
+paths:
+  /v3/ping:
+    get:
+      description: Check if the service is running
+      responses:
+        '200':
+          description: Service is running
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Success'
+components:
+    schemas:
+      Success:
+        type: object
+        properties:
+          http_code:
+            type: integer
+            example: 200
+          success:
+            type: boolean
+            example: true
