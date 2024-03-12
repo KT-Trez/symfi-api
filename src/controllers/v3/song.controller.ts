@@ -1,15 +1,15 @@
 import { ApiErrorV2, CollectionFormatResource, SongResource } from '@resources';
-import type { CollectionFormat, Song } from '@types';
+import type { CollectionFormat, NoBody, NoParams, Song } from '@types';
 import type { NextFunction, Request, Response } from 'express';
 import { Innertube, UniversalCache } from 'youtubei.js';
 
-const searchThroughYouTube = async (
-  req: Request<never, CollectionFormat<Song>, undefined, { page?: string; search: string }>,
+const search = async (
+  req: Request<never, CollectionFormat<Song>, undefined, { page?: string; q: string }>,
   res: Response<CollectionFormat<Song>>,
   next: NextFunction,
 ) => {
   const page = Number(req.query.page); // todo: implement pagination
-  const searchQuery = decodeURI(req.query.search);
+  const searchQuery = decodeURI(req.query.q);
 
   const youtube = await Innertube.create({
     cache: new UniversalCache(true),
@@ -47,6 +47,33 @@ const searchThroughYouTube = async (
   }
 };
 
+const suggestion = async (
+  req: Request<NoParams, CollectionFormat<string>, NoBody, { q: string }>,
+  res: Response<CollectionFormat<string>>,
+  next: NextFunction,
+) => {
+  const searchQuery = decodeURI(req.query.q);
+
+  const youtube = await Innertube.create({
+    cache: new UniversalCache(true),
+  });
+
+  try {
+    const suggestions = await youtube.getSearchSuggestions(searchQuery);
+
+    const data: CollectionFormat<string> = {
+      has_more: false,
+      objects: suggestions,
+      page: 0,
+    };
+
+    res.status(200).json(data);
+  } catch (err) {
+    next(new ApiErrorV2(502, 'Bad Gateway', 'cannot connect to YouTube servers at the moment', err));
+  }
+};
+
 export const songController = {
-  searchThroughYouTube,
+  search,
+  suggestion,
 };

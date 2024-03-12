@@ -8,73 +8,41 @@ type ErrorTestCase = {
   status: number;
 };
 
+type SuccessTestCase = {
+  params?: Record<string, unknown>;
+};
+
 describe('Test "/v3/song" route', () => {
   beforeAll(() => {
     delete process.env.DEBUG;
   });
 
-  describe('GET /v3/song', () => {
-    const searchParam_search = 'rick';
-
-    it('should return search results', async () => {
-      const res = await request(app).get('/v3/song').query({ search: searchParam_search });
-
-      expect(res.status).toBe(200);
-      expect(res.body).toHaveProperty('objects');
-      expect(res.body.objects.length).toBeGreaterThan(0);
-    });
-
-    it('should return search results when "search" query param is a number', async () => {
-      const res = await request(app).get('/v3/song').query({ search: 123 });
-
-      expect(res.status).toBe(200);
-      expect(res.body).toHaveProperty('objects');
-      expect(res.body.objects.length).toBeGreaterThan(0);
-    });
-
-    const testCases: ErrorTestCase[] = [
+  describe('GET /v3/song/search', () => {
+    const errorTestCases: ErrorTestCase[] = [
       {
         message: 'Bad Request',
-        reason: 'query [search]: required\nquery [search]: must be a string\nquery [search]: must be not empty',
+        reason: 'query [q]: required\nquery [q]: must be a string\nquery [q]: must be not empty',
         status: 400,
       },
       {
         message: 'Bad Request',
-        params: { search: [123, 456, 789] },
-        reason: 'query [search]: must be a string',
+        params: { q: [123, 456, 789] },
+        reason: 'query [q]: must be a string',
         status: 400,
       },
       {
         message: 'Bad Request',
-        params: { search: '' },
-        reason: 'query [search]: must be not empty',
-        status: 400,
-      },
-      {
-        message: 'Bad Request',
-        params: { page: 'string', search: searchParam_search },
-        reason: 'query [page]: optional, must be a number greater than or equal to 0',
-        status: 400,
-      },
-      {
-        message: 'Bad Request',
-        params: { page: '', search: searchParam_search },
-        reason: 'query [page]: optional, must be a number greater than or equal to 0',
-        status: 400,
-      },
-      {
-        message: 'Bad Request',
-        params: { page: '-1', search: searchParam_search },
-        reason: 'query [page]: optional, must be a number greater than or equal to 0',
+        params: { q: '' },
+        reason: 'query [q]: must be not empty',
         status: 400,
       },
     ];
 
-    it.each(testCases)(
-      `should return an error: $params, $message - $reason`,
+    it.each(errorTestCases)(
+      `should return an error for the search query: $params`,
       async ({ message, params, reason, status }) => {
         const res = await request(app)
-          .get('/v3/song')
+          .get('/v3/song/search')
           .query(params || {});
 
         expect(res.status).toBe(status);
@@ -83,5 +51,65 @@ describe('Test "/v3/song" route', () => {
         expect(res.body.reason).toEqual(reason);
       },
     );
+
+    const successTestCases: SuccessTestCase[] = [{ params: { q: 'rick' } }, { params: { q: 123 } }];
+
+    it.each(successTestCases)(`should return search results for the search query: $params`, async ({ params }) => {
+      const res = await request(app)
+        .get('/v3/song/search')
+        .query(params || {});
+
+      expect(res.status).toBe(200);
+      expect(res.body).toHaveProperty('objects');
+      expect(res.body.objects.length).toBeGreaterThan(0);
+    });
+  });
+
+  describe('GET /v3/song/suggestions', () => {
+    const errorTestCases: ErrorTestCase[] = [
+      {
+        message: 'Bad Request',
+        reason: 'query [q]: required\nquery [q]: must be a string\nquery [q]: must be not empty',
+        status: 400,
+      },
+      {
+        message: 'Bad Request',
+        params: { q: [123, 456, 789] },
+        reason: 'query [q]: must be a string',
+        status: 400,
+      },
+      {
+        message: 'Bad Request',
+        params: { q: '' },
+        reason: 'query [q]: must be not empty',
+        status: 400,
+      },
+    ];
+
+    it.each(errorTestCases)(
+      `should return an error for the search query: $params`,
+      async ({ message, params, reason, status }) => {
+        const res = await request(app)
+          .get('/v3/song/suggestions')
+          .query(params || {});
+
+        expect(res.status).toBe(status);
+        expect(res.body.http_status).toEqual(status);
+        expect(res.body.message).toEqual(message);
+        expect(res.body.reason).toEqual(reason);
+      },
+    );
+
+    const successTestCases: SuccessTestCase[] = [{ params: { q: 'rick' } }, { params: { q: 123 } }];
+
+    it.each(successTestCases)(`should return search suggestions for the search query: $params`, async ({ params }) => {
+      const res = await request(app)
+        .get('/v3/song/suggestions')
+        .query(params || {});
+
+      expect(res.status).toBe(200);
+      expect(res.body).toHaveProperty('objects');
+      expect(res.body.objects.length).toBeGreaterThan(0);
+    });
   });
 });

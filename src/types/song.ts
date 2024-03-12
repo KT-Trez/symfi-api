@@ -6,7 +6,7 @@ export type Song = {
   id: SongId;
   name: string;
   published: string;
-  thumbnail: string | null;
+  thumbnail: string;
   views: Views;
 };
 

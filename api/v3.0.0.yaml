@@ -6,7 +6,9 @@ info:
     url: https://opensource.org/licenses/MIT
   title: Symfi API
   version: 3.0.0
-
+servers:
+  - description: Development server
+    url: http://localhost:3000/
 paths:
   /v3/ping:
     get:
@@ -18,16 +20,16 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Success'
-  /v3/song:
+  /v3/song/search:
     get:
-      description: Search for a song by given search query
+      description: Search for a song
       parameters:
-        - name: search
+        - name: q
           in: query
           required: true
           schema:
             type: string
-          example: despacito
+          example: 'despacito'
       responses:
         '200':
           description: Song found
@@ -43,11 +45,7 @@ paths:
                         items:
                           $ref: '#/components/schemas/Song'
         '400':
-          description: Bad request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
+          $ref: '#/components/responses/BadRequest'
         '404':
           description: Suggestions not found for the given search query
           content:
@@ -55,12 +53,50 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '502':
-          description: Failed to connect to the YouTube API
+          $ref: '#/components/responses/YouTubeError'
+  /v3/song/suggestion:
+    get:
+      description: Get suggestions for songs
+      parameters:
+        - name: q
+          in: query
+          required: true
+          schema:
+            type: string
+          example: 'rick+astley'
+      responses:
+        '200':
+          description: Song suggestions
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                allOf:
+                  - $ref: '#/components/schemas/Collection'
+                  - type: object
+                    properties:
+                      objects:
+                        type: array
+                        items:
+                          - type: string
+                            example: "Rick Astley - Never Gonna Give You Up"
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '502':
+          $ref: '#/components/responses/YouTubeError'
 components:
+  responses:
+    BadRequest:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    YouTubeError:
+      description: Failed to connect to the YouTube API
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
   schemas:
     Collection:
       description: Collection of data
@@ -69,12 +105,9 @@ components:
         has_more:
           type: boolean
           example: false
-        limit:
-          type: integer
-          example: 10
         objects:
           type: array
-        offset:
+        page:
           type: integer
           example: 0
     Error:

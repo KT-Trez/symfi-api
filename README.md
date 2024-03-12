@@ -14,3 +14,4 @@ Licensed under the [MIT](./LICENSE) License.
 * `npm run lint:fix` - runs linter and fixes issues
 * `npm run start` - starts the server
 * `npm run start:watch` - starts the server and watches for changes
+* `npm run test` - runs e2e tests

@@ -3,3 +3,7 @@ export type CollectionFormat<T> = {
   objects: T[];
   page: number;
 };
+
+export type NoBody = undefined;
+
+export type NoParams = Record<string, never>;

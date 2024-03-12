@@ -75,19 +75,19 @@ paths:
 
 components:
   responses:
-    invalidRequest:
+    InvalidRequest:
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/apiError'
       description: Invalid request
-    noResource:
+    NoResource:
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/apiError'
       description: Cannot find requested resource
-    serverError:
+    ServerError:
       content:
         application/json:
           schema:

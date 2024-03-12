@@ -9,7 +9,7 @@ import os from 'os';
 import path from 'path';
 
 export const app = express();
-const port = 3000;
+const port = process.env.PORT || 5000;
 
 // initialize cache
 let cachePath = path.resolve('cache');
@@ -59,6 +59,8 @@ app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
 });
 
 // start express
-app.listen(port, () => {
-  if (process.env.DEBUG) logger.log(`Server process started :${port}`);
-});
+if (process.env.NODE_ENV !== 'test') {
+  app.listen(port, () => {
+    if (process.env.DEBUG) logger.log(`Server process started :${port}`);
+  });
+}
