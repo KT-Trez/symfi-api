@@ -55,5 +55,5 @@
     "start": "TS_NODE_BASEURL=./dist node -r tsconfig-paths/register dist/main.js",
     "start:watch": "nodemon"
   },
-  "version": "3.3.2"
+  "version": "4.0.0-0"
 }
