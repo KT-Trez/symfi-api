@@ -3,6 +3,7 @@
     "allowJs": false,
     "baseUrl": "src",
     "forceConsistentCasingInFileNames": true,
+    "esModuleInterop": true,
     "lib": [
       "es2022"
     ],
@@ -19,8 +20,8 @@
       "@resources": [
         "resources"
       ],
-      "@routes": [
-        "routes"
+      "@routers": [
+        "routers"
       ],
       "@services": [
         "services"
@@ -29,10 +30,11 @@
         "types"
       ]
     },
+    "resolveJsonModule": true,
     "skipLibCheck": true,
     "sourceMap": false,
     "strict": true,
-    "target": "ES2023"
+    "target": "ES2022"
   },
   "include": [
     "src"

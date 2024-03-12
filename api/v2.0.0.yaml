@@ -11,6 +11,7 @@ paths:
   /media/youtube/{id}:
     description: Get a download link to YouTube's audio / video
     get:
+      deprecated: true
       parameters:
         - description: ID of a audio / video to get a link to
           in: path
@@ -44,6 +45,7 @@ paths:
   /search/youtube:
     description: Searches for YouTube video with given query
     get:
+      deprecated: true
       summary: Gets video matching given keywords
       parameters:
         - description: Search query

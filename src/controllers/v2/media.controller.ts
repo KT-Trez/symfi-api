@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { Innertube, UniversalCache } from 'youtubei.js';
-import { ApiError, Server } from '../../resources';
+import { ApiError } from '../../resources';
 
 const getMediaURL = async (
   req: Request<{ id: string }, { link: string }>,
@@ -11,7 +11,7 @@ const getMediaURL = async (
   const id = req.params.id;
 
   // redirect request to the local endpoint that streams audio
-  if (Server.instance.config.downloadThroughProxy)
+  if (process.env.BE_PROXY)
     return res.status(200).json({
       link: `${req.protocol}://${req.get('host')}/v2/content/youtube/${id}`,
     });

@@ -1,8 +1,8 @@
+import { requestValidatorService } from '@services';
 import express from 'express';
 import { body, param } from 'express-validator';
 import { Innertube, UniversalCache } from 'youtubei.js';
 import { contentController } from '../../controllers/v2';
-import { requestValidatorService } from '../../services';
 
 const router = express.Router();
 

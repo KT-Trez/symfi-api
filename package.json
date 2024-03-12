@@ -20,7 +20,9 @@
   "devDependencies": {
     "@types/cors": "^2.8.17",
     "@types/express": "^4.17.21",
+    "@types/jest": "^29.5.12",
     "@types/node": "^20.11.25",
+    "@types/supertest": "^6.0.2",
     "@typescript-eslint/eslint-plugin": "^7.2.0",
     "@typescript-eslint/parser": "^7.2.0",
     "eslint": "^8.57.0",
@@ -29,6 +31,8 @@
     "jest": "^29.7.0",
     "nodemon": "^3.1.0",
     "prettier": "^3.2.5",
+    "supertest": "^6.3.4",
+    "ts-jest": "^29.1.2",
     "ts-node": "^10.9.2",
     "typescript": "^5.4.2"
   },
@@ -47,6 +51,7 @@
     "build": "tsc",
     "build:watch": "tsc -w",
     "lint": "eslint -c .eslintrc.json --ext .ts src/",
+    "lint:fix": "eslint -c .eslintrc.json --ext .ts src/ --fix",
     "start": "TS_NODE_BASEURL=./dist node -r tsconfig-paths/register dist/main.js",
     "start:watch": "nodemon"
   },

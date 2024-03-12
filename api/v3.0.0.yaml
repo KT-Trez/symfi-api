@@ -18,14 +18,145 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Success'
+  /v3/song:
+    get:
+      description: Search for a song by given search query
+      parameters:
+        - name: search
+          in: query
+          required: true
+          schema:
+            type: string
+          example: despacito
+      responses:
+        '200':
+          description: Song found
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Collection'
+                  - type: object
+                    properties:
+                      objects:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Song'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Suggestions not found for the given search query
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '502':
+          description: Failed to connect to the YouTube API
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 components:
-    schemas:
-      Success:
-        type: object
-        properties:
-          http_code:
-            type: integer
-            example: 200
-          success:
-            type: boolean
-            example: true
+  schemas:
+    Collection:
+      description: Collection of data
+      type: object
+      properties:
+        has_more:
+          type: boolean
+          example: false
+        limit:
+          type: integer
+          example: 10
+        objects:
+          type: array
+        offset:
+          type: integer
+          example: 0
+    Error:
+      description: Error response
+      type: object
+      properties:
+        http_code:
+          type: integer
+          example: 400
+        message:
+          type: string
+          example: 'Bad request'
+        reason:
+          type: string
+          example: 'query [id]: required, must be a string'
+    Song:
+      description: Song object
+      type: object
+      properties:
+        channel:
+          description: "YouTube channel information"
+          properties:
+            name:
+              description: "Channel name"
+              example: "Rick Astley"
+              type: string
+            url:
+              description: "Channel URL"
+              example: "https://www.youtube.com/channel/UCuAXFkgsw1L7xaCfnd5JJOw"
+              type: string
+          type: object
+        duration:
+          description: "Song duration"
+          properties:
+            count:
+              description: "Duration in seconds"
+              example: 180
+              type: integer
+            label:
+              description: "Duration in human readable format"
+              example: "3:33"
+              type: string
+          type: object
+        id:
+          description: "YouTube video ID"
+          example: "dQw4w9WgXcQ"
+          type: integer
+        name:
+          description: "Song title"
+          example: "Never Gonna Give You Up"
+          type: string
+        published:
+          description: "Song publish date in human readable format"
+          example: "11 years ago"
+          type: string
+        thumbnail:
+          description: "URL to the song thumbnail"
+          example: "https://i.ytimg.com/vi/dQw4w9WgXcQ/hqdefault.jpg"
+          nullable: true
+          type: string
+        views:
+          description: "Song views count"
+          properties:
+            count:
+              description: "Views count"
+              example: 1_000_000_000
+              type: integer
+            label:
+              description: "Views count in human readable format"
+              example: "1B"
+              type: string
+          type: object
+    Success:
+      description: Success response
+      type: object
+      properties:
+        http_code:
+          type: integer
+          example: 200
+        message:
+          type: string
+          example: 'API v3.0.0 is running'
+        success:
+          type: boolean
+          example: true
