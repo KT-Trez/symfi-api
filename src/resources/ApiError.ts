@@ -15,6 +15,8 @@ export class ApiErrorV2 extends Error {
   http_status: number;
   message: string;
   reason: string;
+  // noinspection JSUnusedGlobalSymbols
+  success = false;
 
   constructor(http_status: number, message: string, reason: string, cause?: unknown) {
     super(message, { cause });

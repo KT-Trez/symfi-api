@@ -17,6 +17,62 @@ describe('Test "/v3/song" route', () => {
     delete process.env.DEBUG;
   });
 
+  describe('GET /v3/song/download', () => {
+    const errorTestCases: ErrorTestCase[] = [
+      {
+        message: 'Bad Request',
+        reason: 'query [id]: required\nquery [id]: must be a string\nquery [id]: must be not empty',
+        status: 400,
+      },
+      {
+        message: 'Bad Request',
+        params: { id: [123, 456, 789] },
+        reason: 'query [id]: must be a string',
+        status: 400,
+      },
+      {
+        message: 'Bad Request',
+        params: { id: '' },
+        reason: 'query [id]: must be not empty',
+        status: 400,
+      },
+      {
+        message: 'Not Found',
+        params: { id: 'invalid-id' },
+        reason: 'the requested video was not found',
+        status: 404,
+      },
+    ];
+
+    it.each(errorTestCases)(
+      `should return an error for the query: $params`,
+      async ({ message, params, reason, status }) => {
+        const res = await request(app)
+          .get('/v3/song/download')
+          .query(params || {});
+
+        expect(res.status).toBe(status);
+        expect(res.body.http_status).toEqual(status);
+        expect(res.body.message).toEqual(message);
+        expect(res.body.reason).toEqual(reason);
+      },
+    );
+
+    const successTestCases: SuccessTestCase[] = [{ params: { id: 'dQw4w9WgXcQ' } }];
+
+    it.each(successTestCases)(`should return download link for the query: $params`, async ({ params }) => {
+      const res = await request(app)
+        .get('/v3/song/download')
+        .query(params || {});
+
+      expect(res.status).toBe(200);
+      expect(res.body.http_status).toEqual(200);
+      expect(res.body.message).toEqual('Video found');
+      expect(res.body.meta).toMatch(/^https?:\S+\.\S{2,3}/);
+      expect(res.body.success).toBeTruthy();
+    });
+  });
+
   describe('GET /v3/song/search', () => {
     const errorTestCases: ErrorTestCase[] = [
       {
@@ -90,7 +146,7 @@ describe('Test "/v3/song" route', () => {
       `should return an error for the search query: $params`,
       async ({ message, params, reason, status }) => {
         const res = await request(app)
-          .get('/v3/song/suggestions')
+          .get('/v3/song/suggestion')
           .query(params || {});
 
         expect(res.status).toBe(status);
@@ -104,7 +160,7 @@ describe('Test "/v3/song" route', () => {
 
     it.each(successTestCases)(`should return search suggestions for the search query: $params`, async ({ params }) => {
       const res = await request(app)
-        .get('/v3/song/suggestions')
+        .get('/v3/song/suggestion')
         .query(params || {});
 
       expect(res.status).toBe(200);

@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import { ApiError, ApiErrorV2 } from '@resources';
 import { v2Router, v3Router } from '@routers';
 import { Logger } from '@services';
@@ -35,7 +36,7 @@ const logger = new Logger();
 // initialize handlers
 app.use(cors());
 app.use((req, res, next) => {
-  if (process.env.DEBUG) logger.log(`${req.method} ${req.originalUrl}`);
+  if (process.env.DEBUG || process.env.LOG_REQUESTS) logger.log(`${req.method} ${req.originalUrl}`);
   next();
 });
 
@@ -61,6 +62,6 @@ app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
 // start express
 if (process.env.NODE_ENV !== 'test') {
   app.listen(port, () => {
-    if (process.env.DEBUG) logger.log(`Server process started :${port}`);
+    logger.log(`Server process started :${port}`);
   });
 }
