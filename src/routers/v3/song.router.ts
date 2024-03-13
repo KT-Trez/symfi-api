@@ -1,7 +1,7 @@
 import { songController } from '@controllers';
 import { requestValidatorService } from '@services';
 import express from 'express';
-import { query } from 'express-validator';
+import { param, query } from 'express-validator';
 
 const router = express.Router();
 
@@ -44,5 +44,7 @@ router.get(
   requestValidatorService,
   songController.suggestion,
 );
+
+router.get('/:id', param('id'), songController.songId);
 
 export { router as songRouter };

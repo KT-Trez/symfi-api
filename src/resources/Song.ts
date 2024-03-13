@@ -1,4 +1,5 @@
-import type { Channel, Duration, Song, Video, Views } from '@types';
+import type { Channel, Duration, Song, Views } from '@types';
+import { YTNodes } from 'youtubei.js';
 
 export class SongResource implements Song {
   channel: Channel;
@@ -9,7 +10,7 @@ export class SongResource implements Song {
   thumbnail: string;
   views: Views;
 
-  constructor(video: Video) {
+  constructor(video: YTNodes.Video) {
     const views = video.view_count.toString().replace(/,/g, '').split(' ').at(0);
 
     this.channel = {

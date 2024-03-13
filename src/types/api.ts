@@ -7,3 +7,5 @@ export type CollectionFormat<T> = {
 export type NoBody = undefined;
 
 export type NoParams = Record<string, never>;
+
+export type NoQuery = Record<string, never>;

@@ -20,6 +20,30 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Success'
+  /v3/song/:id:
+    get:
+      description: Download a song by its id
+      parameters:
+        - name: songId
+          in: path
+          required: true
+          schema:
+            type: string
+          example: 'dQw4w9WgXcQ'
+      responses:
+        '200':
+          description: Song found
+          content:
+            audio/mpeg3:
+              schema:
+                format: binary
+                type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '502':
+          $ref: '#/components/responses/YouTubeError'
   /v3/song/download:
     get:
       description: Get the song download URL

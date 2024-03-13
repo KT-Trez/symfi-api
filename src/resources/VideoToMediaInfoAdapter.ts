@@ -1,4 +1,5 @@
-import type { MediaInfo, Thumbnail, Video } from '@types';
+import type { MediaInfo, Thumbnail } from '@types';
+import { YTNodes } from 'youtubei.js';
 
 export class VideoToMediaInfoAdapter implements MediaInfo {
   public channel: { id: string; name: string; url: string };
@@ -12,7 +13,7 @@ export class VideoToMediaInfoAdapter implements MediaInfo {
   };
   public title: string;
 
-  constructor(video: Video) {
+  constructor(video: YTNodes.Video) {
     this.channel = {
       id: video.author.id,
       name: video.author.name,

@@ -1,7 +1,7 @@
 import { ApiErrorV2, ApiSuccess, CollectionFormatResource, SongResource } from '@resources';
-import type { CollectionFormat, NoBody, NoParams, Song } from '@types';
+import type { CollectionFormat, NoBody, NoParams, NoQuery, Song } from '@types';
 import type { NextFunction, Request, Response } from 'express';
-import { Innertube, UniversalCache } from 'youtubei.js';
+import { Innertube, UniversalCache, Utils, YTNodes } from 'youtubei.js';
 
 const download = async (
   req: Request<NoParams, NoBody, ApiSuccess, { id: string }>,
@@ -25,13 +25,12 @@ const download = async (
     }
 
     const format = info.chooseFormat({
-      type: 'audio',
       quality: 'best',
+      type: 'audio',
     });
 
     res.status(200).json(new ApiSuccess('Video found', format.decipher(youtube.session.player)));
   } catch (err) {
-    // check if the error is due to the video being unavailable
     if (err instanceof Error && /this video is unavailable/i.test(err.message)) {
       next(new ApiErrorV2(404, 'Not Found', 'the requested video was not found'));
       return;
@@ -64,14 +63,7 @@ const search = async (
 
     const data = search.videos.reduce<CollectionFormat<Song>>(
       (acc, video) => {
-        if (/video/i.test(video.type)) {
-          const hasNoIdProperty = !('id' in video);
-          const hasNoPublishedProperty = !('published' in video);
-          const hasNoViewsProperty = !('view_count' in video);
-          if (hasNoIdProperty || hasNoPublishedProperty || hasNoViewsProperty) return acc;
-
-          acc.objects.push(new SongResource(video));
-        }
+        if (video instanceof YTNodes.Video) acc.objects.push(new SongResource(video));
 
         return acc;
       },
@@ -80,6 +72,42 @@ const search = async (
 
     res.status(200).json(data);
   } catch (err) {
+    next(new ApiErrorV2(502, 'Bad Gateway', 'cannot connect to YouTube servers at the moment', err));
+  }
+};
+
+const songId = async (
+  req: Request<{ id: string }, unknown, NoBody, NoQuery>,
+  res: Response<unknown>,
+  next: NextFunction,
+) => {
+  const id = req.params.id;
+
+  const youtube = await Innertube.create({
+    cache: new UniversalCache(true),
+  });
+
+  try {
+    const stream = await youtube.download(id, {
+      format: 'webm',
+      type: 'audio',
+      quality: 'best',
+    });
+
+    for await (const chunk of Utils.streamToIterable(stream)) {
+      res.write(chunk);
+    }
+
+    res.end();
+  } catch (err) {
+    if (err instanceof Error && /this video is unavailable/i.test(err.message)) {
+      next(new ApiErrorV2(404, 'Not Found', 'the requested video was not found'));
+      return;
+    }
+    if (err instanceof Error && /no matching formats found/i.test(err.message)) {
+      next(new ApiErrorV2(404, 'Not Found', 'no matching formats found for the requested video'));
+      return;
+    }
     next(new ApiErrorV2(502, 'Bad Gateway', 'cannot connect to YouTube servers at the moment', err));
   }
 };
@@ -113,5 +141,6 @@ const suggestion = async (
 export const songController = {
   download,
   search,
+  songId,
   suggestion,
 };

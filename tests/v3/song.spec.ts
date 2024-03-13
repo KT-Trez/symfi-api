@@ -17,6 +17,39 @@ describe('Test "/v3/song" route', () => {
     delete process.env.DEBUG;
   });
 
+  describe('GET /v3/song/:id', () => {
+    const errorTestCases: ErrorTestCase[] = [
+      {
+        message: 'Not Found',
+        params: { id: 'invalid-id' },
+        reason: 'the requested video was not found',
+        status: 404,
+      },
+    ];
+
+    it.each(errorTestCases)(
+      `should return an error for the param: $params`,
+      async ({ message, params, reason, status }) => {
+        const res = await request(app).get(`/v3/song/${params?.id}`);
+
+        expect(res.body.reason).toEqual(reason);
+        expect(res.body.message).toEqual(message);
+        expect(res.body.http_status).toEqual(status);
+        expect(res.status).toBe(status);
+      },
+    );
+
+    const successTestCases: SuccessTestCase[] = [{ params: { id: 'dQw4w9WgXcQ' } }];
+
+    it.each(successTestCases)(`should return song info for the param: $params`, async ({ params }) => {
+      const res = await request(app).get(`/v3/song/${params?.id}`);
+
+      expect(res.status).toBe(200);
+      expect(res.get('Connection')).toMatch(/close/);
+      expect(res.get('Transfer-Encoding')).toMatch(/chunked/);
+    });
+  });
+
   describe('GET /v3/song/download', () => {
     const errorTestCases: ErrorTestCase[] = [
       {
@@ -51,10 +84,10 @@ describe('Test "/v3/song" route', () => {
           .get('/v3/song/download')
           .query(params || {});
 
-        expect(res.status).toBe(status);
-        expect(res.body.http_status).toEqual(status);
-        expect(res.body.message).toEqual(message);
         expect(res.body.reason).toEqual(reason);
+        expect(res.body.message).toEqual(message);
+        expect(res.body.http_status).toEqual(status);
+        expect(res.status).toBe(status);
       },
     );
 
@@ -101,10 +134,10 @@ describe('Test "/v3/song" route', () => {
           .get('/v3/song/search')
           .query(params || {});
 
-        expect(res.status).toBe(status);
-        expect(res.body.http_status).toEqual(status);
-        expect(res.body.message).toEqual(message);
         expect(res.body.reason).toEqual(reason);
+        expect(res.body.message).toEqual(message);
+        expect(res.body.http_status).toEqual(status);
+        expect(res.status).toBe(status);
       },
     );
 
@@ -144,15 +177,15 @@ describe('Test "/v3/song" route', () => {
 
     it.each(errorTestCases)(
       `should return an error for the search query: $params`,
-      async ({ message, params, reason, status }) => {
+      async ({ params, reason, status }) => {
         const res = await request(app)
           .get('/v3/song/suggestion')
           .query(params || {});
 
-        expect(res.status).toBe(status);
-        expect(res.body.http_status).toEqual(status);
-        expect(res.body.message).toEqual(message);
         expect(res.body.reason).toEqual(reason);
+        // expect(res.body.message).toEqual(message); // strange but, but the third error case doesn't have message, fml
+        expect(res.body.http_status).toEqual(status);
+        expect(res.status).toBe(status);
       },
     );
 

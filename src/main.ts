@@ -9,6 +9,11 @@ import fs from 'fs';
 import os from 'os';
 import path from 'path';
 
+if (process.env.NODE_ENV === 'test') {
+  delete process.env.DEBUG;
+  delete process.env.LOG_REQUESTS;
+}
+
 export const app = express();
 const port = process.env.PORT || 5000;
 
