@@ -8,7 +8,7 @@ info:
   version: 3.0.0
 servers:
   - description: Development server
-    url: http://localhost:3000/
+    url: http://localhost:5000/
 paths:
   /v3/ping:
     get:
@@ -20,6 +20,29 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Success'
+  /v3/song/download:
+    get:
+      description: Get the song download URL
+      parameters:
+        - name: id
+          in: query
+          required: true
+          schema:
+            type: string
+          example: 'dQw4w9WgXcQ'
+      responses:
+        '200':
+          description: Success response with the song download URL in the meta field
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Success'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '502':
+          $ref: '#/components/responses/YouTubeError'
   /v3/song/search:
     get:
       description: Search for a song
@@ -46,6 +69,7 @@ paths:
                           $ref: '#/components/schemas/Song'
         '400':
           $ref: '#/components/responses/BadRequest'
+        # todo: maybe drop this response
         '404':
           description: Suggestions not found for the given search query
           content:
@@ -91,6 +115,12 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
+    NotFound:
+      description: Not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
     YouTubeError:
       description: Failed to connect to the YouTube API
       content:
@@ -120,6 +150,10 @@ components:
         message:
           type: string
           example: 'Bad request'
+        success:
+          description: Boolean flag
+          example: false
+          type: boolean
         reason:
           type: string
           example: 'query [id]: required, must be a string'
@@ -185,11 +219,19 @@ components:
       type: object
       properties:
         http_code:
-          type: integer
+          description: HTTP status code
           example: 200
+          type: integer
         message:
-          type: string
+          description: Success message
           example: 'API v3.0.0 is running'
+          type: string
+        meta:
+          description: Additional information
+          example: "https://example.com/"
+          nullable: true
+          type: string
         success:
-          type: boolean
+          description: Boolean flag
           example: true
+          type: boolean
