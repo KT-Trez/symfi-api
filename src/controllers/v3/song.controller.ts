@@ -1,7 +1,7 @@
 import { ApiErrorV2, ApiSuccess, CollectionFormatResource, SongResource } from '@resources';
 import type { CollectionFormat, NoBody, NoParams, NoQuery, Song } from '@types';
 import type { NextFunction, Request, Response } from 'express';
-import { Innertube, UniversalCache, Utils, YTNodes } from 'youtubei.js';
+import { Innertube, UniversalCache, Utils } from 'youtubei.js';
 
 const download = async (
   req: Request<NoParams, NoBody, ApiSuccess, { id: string }>,
@@ -61,9 +61,14 @@ const search = async (
       return next(new ApiErrorV2(404, 'No resource', 'found no videos for the given id'));
     }
 
+    const resourceMap = new Map<string, true>();
+
     const data = search.videos.reduce<CollectionFormat<Song>>(
       (acc, video) => {
-        if (video instanceof YTNodes.Video) acc.objects.push(new SongResource(video));
+        if (SongResource.isValue(video) && !resourceMap.has(video.id)) {
+          acc.objects.push(new SongResource(video));
+          resourceMap.set(video.id, true);
+        }
 
         return acc;
       },
