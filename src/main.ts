@@ -4,6 +4,7 @@ import { v2Router, v3Router } from '@routers';
 import { Logger } from '@services';
 import cors from 'cors';
 import express, { type NextFunction, type Request, type Response } from 'express';
+import { rateLimit } from 'express-rate-limit';
 import Cache from 'file-system-cache';
 import fs from 'fs';
 import os from 'os';
@@ -29,17 +30,27 @@ try {
     fs.mkdirSync(cachePath);
   }
 }
-// todo: implement cache
+
 export const cache = Cache({
   basePath: cachePath,
   extension: '.tmp',
   ns: 'media',
 });
 
+const limiter = rateLimit({
+  limit: 500, // max 100 requests per windowMs
+  legacyHeaders: false,
+  message: new ApiErrorV2(429, 'Too Many Requests', 'You have exceeded the 100 requests in 15 minutes limit!'),
+  standardHeaders: true,
+  windowMs: 15 * 60 * 1000, // 15 minutes
+});
+
 const logger = new Logger();
 
 // initialize handlers
 app.use(cors());
+app.use(limiter);
+
 app.use((req, res, next) => {
   if (process.env.DEBUG || process.env.LOG_REQUESTS) logger.log(`${req.method} ${req.originalUrl}`);
   next();
@@ -49,7 +60,7 @@ app.use('/v2', v2Router);
 app.use('/v3', v3Router);
 
 app.all('*', (_req, res, next: NextFunction) => {
-  next(new ApiErrorV2(404, 'Not Found', 'The requested resource was not found'));
+  next(new ApiErrorV2(404, 'Not Found', 'The requested resource was not found.'));
 });
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars

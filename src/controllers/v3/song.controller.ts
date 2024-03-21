@@ -32,10 +32,10 @@ const download = async (
     res.status(200).json(new ApiSuccess('Video found', format.decipher(youtube.session.player)));
   } catch (err) {
     if (err instanceof Error && /this video is unavailable/i.test(err.message)) {
-      next(new ApiErrorV2(404, 'Not Found', 'the requested video was not found'));
+      next(new ApiErrorV2(404, 'Not Found', 'The requested video was not found.'));
       return;
     }
-    next(new ApiErrorV2(502, 'Bad Gateway', 'cannot connect to YouTube servers at the moment', err));
+    next(new ApiErrorV2(502, 'Bad Gateway', 'Cannot connect to YouTube servers at the moment.', err));
   }
 };
 
@@ -59,7 +59,7 @@ const search = async (
     });
 
     if (search.videos.length <= 0) {
-      return next(new ApiErrorV2(404, 'No resource', 'found no videos for the given id'));
+      return next(new ApiErrorV2(404, 'No resource', 'The videos matching requested query were not found.'));
     }
 
     const resourceMap = new Map<string, true>();
@@ -78,7 +78,7 @@ const search = async (
 
     res.status(200).json(data);
   } catch (err) {
-    next(new ApiErrorV2(502, 'Bad Gateway', 'cannot connect to YouTube servers at the moment', err));
+    next(new ApiErrorV2(502, 'Bad Gateway', 'Cannot connect to YouTube servers at the moment.', err));
   }
 };
 
@@ -107,14 +107,14 @@ const songId = async (
     res.end();
   } catch (err) {
     if (err instanceof Error && /this video is unavailable/i.test(err.message)) {
-      next(new ApiErrorV2(404, 'Not Found', 'the requested video was not found'));
+      next(new ApiErrorV2(404, 'Not Found', 'The requested video was not found.'));
       return;
     }
     if (err instanceof Error && /no matching formats found/i.test(err.message)) {
-      next(new ApiErrorV2(404, 'Not Found', 'no matching formats found for the requested video'));
+      next(new ApiErrorV2(404, 'Not Found', 'Matching formats in the requested video were not found.'));
       return;
     }
-    next(new ApiErrorV2(502, 'Bad Gateway', 'cannot connect to YouTube servers at the moment', err));
+    next(new ApiErrorV2(502, 'Bad Gateway', 'Cannot connect to YouTube servers at the moment.', err));
   }
 };
 
@@ -140,7 +140,7 @@ const suggestion = async (
 
     res.status(200).json(data);
   } catch (err) {
-    next(new ApiErrorV2(502, 'Bad Gateway', 'cannot connect to YouTube servers at the moment', err));
+    next(new ApiErrorV2(502, 'Bad Gateway', 'Cannot connect to YouTube servers at the moment.', err));
   }
 };
 

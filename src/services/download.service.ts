@@ -44,7 +44,7 @@ export const getResource = async (
     fs.mkdirSync(resourceCacheDirPath);
   }
 
-  const resourcePath = path.join(resourceCacheDirPath, `${resourceId}.wav`);
+  const resourcePath = path.resolve(resourceCacheDirPath, `${resourceId}.wav`);
   const resource = fs.createWriteStream(resourcePath);
 
   return await new Promise((resolve, reject) => {
