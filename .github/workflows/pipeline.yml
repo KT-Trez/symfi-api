@@ -34,6 +34,13 @@ jobs:
           logout: true
           push: true
           tags: kttrez/symfi-api:latest
+
+      - name: Deploy to Render.com
+        uses: bankfliptech/deploy-to-render@v1
+        with:
+          apiKey: ${{ secrets.RENDER_API_KEY }}
+          deployHookURL: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+          serviceId: ${{ secrets.RENDER_SERVICE_ID }}
 on:
   - issue_comment
   - pull_request_review_comment
