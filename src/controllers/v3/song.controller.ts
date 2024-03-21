@@ -44,6 +44,7 @@ const search = async (
   res: Response<CollectionFormat<Song>>,
   next: NextFunction,
 ) => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const page = Number(req.query.page); // todo: implement pagination
   const searchQuery = decodeURI(req.query.q);
 
