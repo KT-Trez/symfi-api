@@ -38,6 +38,8 @@ jobs:
       - name: Deploy to Render.com
         run: curl -X GET ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
 on:
-  - issue_comment
-  - pull_request_review_comment
-  - push
+  pull_request:
+    branches:
+      - master
+    types:
+      - closed
