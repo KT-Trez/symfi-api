@@ -17,6 +17,9 @@ jobs:
       - name: Run lint
         run: npm run lint
 
+      - name: Build
+        run: npm run build
+
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
         with:
