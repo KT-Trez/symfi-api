@@ -20,7 +20,9 @@ const download = async (
 
     // redirect request to the local endpoint that streams audio
     if (process.env.PROXY_DOWNLOAD_ENABLED) {
-      res.status(200).json(new ApiSuccess('Video found', `${req.protocol}://${req.get('host')}/v3/song/${id}`));
+      const origin = process.env.PROXY_DOWNLOAD_ORIGIN || `${req.protocol}://${req.get('host')}`;
+      const redirect = new URL(`/v3/song/${id}`, origin);
+      res.status(200).json(new ApiSuccess('Video found', redirect.href));
       return;
     }
 

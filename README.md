@@ -9,6 +9,7 @@ Backend service for the Symfi application.
 * `NODE_ENV`: (`'test' | undefined`) - environment to run the server in
 * `PORT`: (`number | undefined`) - port to run the server on
 * `PROXY_DOWNLOAD_ENABLED`: (`true | undefined`) - enable proxy download
+* `PROXY_DOWNLOAD_ORIGIN`: (`string | undefined`) - origin to proxy download requests to
 
 ## License
 

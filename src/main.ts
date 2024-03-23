@@ -37,7 +37,7 @@ export const cache = Cache({
   ns: 'media',
 });
 
-const limiter = rateLimit({
+export const limiter = rateLimit({
   limit: 500, // max 100 requests per windowMs
   legacyHeaders: false,
   message: new ApiErrorV2(429, 'Too Many Requests', 'You have exceeded the 100 requests in 15 minutes limit!'),
@@ -49,14 +49,13 @@ const logger = new Logger();
 
 // initialize handlers
 app.use(cors());
-app.use(limiter);
 
 app.use((req, res, next) => {
   if (process.env.DEBUG || process.env.LOG_REQUESTS) logger.log(`${req.method} ${req.originalUrl}`);
   next();
 });
 
-app.use('/v2', v2Router);
+app.use('/v2', limiter, v2Router);
 app.use('/v3', v3Router);
 
 app.all('*', (_req, res, next: NextFunction) => {
@@ -78,6 +77,6 @@ app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
 // start express
 if (process.env.NODE_ENV !== 'test') {
   app.listen(port, () => {
-    logger.log(`Server process started :${port}`);
+    logger.log(`Status: [STARTED], PORT: [${port}], Version: [v${process.env.npm_package_version}]`);
   });
 }
