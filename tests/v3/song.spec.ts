@@ -22,7 +22,7 @@ describe('Test "/v3/song" route', () => {
       {
         message: 'Not Found',
         params: { id: 'invalid-id' },
-        reason: 'the requested video was not found',
+        reason: 'The requested video was not found.',
         status: 404,
       },
     ];
@@ -72,7 +72,7 @@ describe('Test "/v3/song" route', () => {
       {
         message: 'Not Found',
         params: { id: 'invalid-id' },
-        reason: 'the requested video was not found',
+        reason: 'The requested video was not found.',
         status: 404,
       },
     ];

@@ -5,7 +5,7 @@ import { Logger } from '@services';
 import cors from 'cors';
 import express, { type NextFunction, type Request, type Response } from 'express';
 import { rateLimit } from 'express-rate-limit';
-import Cache from 'file-system-cache';
+import { Cache } from 'file-system-cache';
 import fs from 'fs';
 import os from 'os';
 import path from 'path';
@@ -31,7 +31,7 @@ try {
   }
 }
 
-export const cache = Cache({
+export const cache = new Cache({
   basePath: cachePath,
   extension: '.tmp',
   ns: 'media',
@@ -64,15 +64,12 @@ app.all('*', (_req, _res, next: NextFunction) => {
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
-  logger.log(err.message, 'ERROR');
-  // eslint-disable-next-line no-console
-  console.error(err.cause);
-
   if (err instanceof ApiError) {
     res.status(err.status).json(err);
   } else if (err instanceof ApiErrorV2) {
     res.status(err.http_status).json(err);
   } else {
+    logger.log(`${err.message} | ${err.cause}`, 'ERROR');
     res.status(500).json('Internal Server Error');
   }
 });
