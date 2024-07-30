@@ -50,26 +50,29 @@ const logger = new Logger();
 // initialize handlers
 app.use(cors());
 
-app.use((req, res, next) => {
+app.use((req, _res, next) => {
   if (process.env.DEBUG || process.env.LOG_REQUESTS) logger.log(`${req.method} ${req.originalUrl}`);
   next();
 });
 
 app.use('/v2', limiter, v2Router);
-app.use('/v3', v3Router);
+app.use('/v3', limiter, v3Router);
 
-app.all('*', (_req, res, next: NextFunction) => {
+app.all('*', (_req, _res, next: NextFunction) => {
   next(new ApiErrorV2(404, 'Not Found', 'The requested resource was not found.'));
 });
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
+  logger.log(err.message, 'ERROR');
+  // eslint-disable-next-line no-console
+  console.error(err.cause);
+
   if (err instanceof ApiError) {
     res.status(err.status).json(err);
   } else if (err instanceof ApiErrorV2) {
     res.status(err.http_status).json(err);
   } else {
-    logger.log(err.message, 'ERROR');
     res.status(500).json('Internal Server Error');
   }
 });
