@@ -55,7 +55,8 @@
     "lint:fix": "eslint -c .eslintrc.json --ext .ts src/ --fix",
     "start": "TS_NODE_BASEURL=./dist node -r tsconfig-paths/register dist/main.js",
     "start:watch": "nodemon",
-    "test": "jest"
+    "test": "jest",
+    "typecheck": "tsc --noEmit"
   },
   "version": "4.0.0-2"
 }
