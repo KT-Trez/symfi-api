@@ -1,9 +1,20 @@
 name: Run unit, integration and e2e tests
 jobs:
   test:
-    if: contains(github.event.comment.html_url, '/pull/') && contains(github.event.comment.body, '/test')
+    if: github.event.issue.pull_request && contains(github.event.comment.body, '/test')
     runs-on: ubuntu-latest
     steps:
+      - name: Get PR branch
+        uses: xt0rted/pull-request-comment-branch@v1
+        id: comment-branch
+
+      - name: Set latest commit status as pending
+        uses: myrotvorets/set-commit-status-action@master
+        with:
+          sha: ${{ steps.comment-branch.outputs.head_sha }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          status: pending
+          
       - name: Use Node.js
         uses: actions/setup-node@v3
         with:
@@ -25,4 +36,6 @@ jobs:
         run: npm run test
 on:
   issue_comment:
-    types: [ created, edited ]
+    types:
+      - created
+      - edited
