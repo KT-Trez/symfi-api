@@ -5,16 +5,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Get PR branch
-        uses: xt0rted/pull-request-comment-branch@v1
         id: comment-branch
+        uses: xt0rted/pull-request-comment-branch@v1
 
       - name: Set latest commit status as pending
         uses: myrotvorets/set-commit-status-action@master
         with:
           sha: ${{ steps.comment-branch.outputs.head_sha }}
-          token: ${{ secrets.GITHUB_TOKEN }}
           status: pending
-          
+          token: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Use Node.js
         uses: actions/setup-node@v3
         with:
@@ -34,6 +34,13 @@ jobs:
 
       - name: Run tests
         run: npm run test
+
+      - name: Set latest commit status as ${{ job.status }}
+        uses: myrotvorets/set-commit-status-action@master
+        with:
+          sha: ${{ steps.comment-branch.outputs.head_sha }}
+          status: ${{ job.status }}
+          token: ${{ secrets.GITHUB_TOKEN }}
 on:
   issue_comment:
     types:
