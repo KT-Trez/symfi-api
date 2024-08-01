@@ -1,4 +1,4 @@
-import express, { Response } from 'express';
+import express, { type Response } from 'express';
 import { contentRouter, mediaRouter, searchRouter } from './v2';
 
 const router = express.Router();

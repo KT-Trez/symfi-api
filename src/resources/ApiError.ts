@@ -15,3 +15,23 @@ export class ApiError extends Error {
     this.status = status;
   }
 }
+
+export class ApiErrorV2 extends Error {
+  http_status: number;
+  message: string;
+  reason: string;
+  // noinspection JSUnusedGlobalSymbols
+  success = false;
+
+  constructor(
+    http_status: number,
+    message: string,
+    reason: string,
+    cause?: unknown,
+  ) {
+    super(message, { cause });
+    this.http_status = http_status;
+    this.message = message;
+    this.reason = reason;
+  }
+}

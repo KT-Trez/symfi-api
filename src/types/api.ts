@@ -1,10 +1,11 @@
-export const API_ERROR_STATUS_CONST = {
-  INVALID_BODY: 0,
-  INVALID_PATH: 1,
-  INVALID_QUERY: 2,
-  NO_RESOURCE: 3,
-  SERVER_ERROR: 4,
-} as const;
+export type CollectionFormat<T> = {
+  has_more: boolean;
+  objects: T[];
+  page: number;
+};
 
-export type API_ERROR_STATUS =
-  (typeof API_ERROR_STATUS_CONST)[keyof typeof API_ERROR_STATUS_CONST];
+export type NoBody = undefined;
+
+export type NoParams = Record<string, never>;
+
+export type NoQuery = Record<string, never>;

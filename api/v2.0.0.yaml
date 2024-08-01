@@ -11,6 +11,7 @@ paths:
   /media/youtube/{id}:
     description: Get a download link to YouTube's audio / video
     get:
+      deprecated: true
       parameters:
         - description: ID of a audio / video to get a link to
           in: path
@@ -44,6 +45,7 @@ paths:
   /search/youtube:
     description: Searches for YouTube video with given query
     get:
+      deprecated: true
       summary: Gets video matching given keywords
       parameters:
         - description: Search query
@@ -73,19 +75,19 @@ paths:
 
 components:
   responses:
-    invalidRequest:
+    InvalidRequest:
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/apiError'
       description: Invalid request
-    noResource:
+    NoResource:
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/apiError'
       description: Cannot find requested resource
-    serverError:
+    ServerError:
       content:
         application/json:
           schema:

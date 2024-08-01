@@ -1,8 +1,8 @@
+import { mediaController } from '@controllers';
+import { requestValidatorService } from '@services';
 import express from 'express';
 import { param } from 'express-validator';
 import { Innertube, UniversalCache } from 'youtubei.js';
-import { mediaController } from '../../controllers/v2';
-import { requestValidatorService } from '../../services';
 
 const router = express.Router();
 
@@ -13,7 +13,7 @@ router.get(
     .withMessage('required, must be a string')
     .bail()
     .custom(async (_, { req }) => {
-      const audioID = req.params!.id;
+      const audioID = req.params?.id;
 
       const youtube = await Innertube.create({
         cache: new UniversalCache(false),

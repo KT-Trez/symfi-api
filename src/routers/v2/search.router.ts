@@ -1,7 +1,7 @@
+import { searchController } from '@controllers';
+import { requestValidatorService } from '@services';
 import express from 'express';
 import { query } from 'express-validator';
-import { searchController } from '../../controllers/v2';
-import { requestValidatorService } from '../../services';
 
 const router = express.Router();
 

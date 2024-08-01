@@ -8,6 +8,7 @@ info:
 paths:
   /search/youtube:
     get:
+      deprecated: true
       description: Searches through YouTube against given query.
       responses:
         200:
@@ -73,7 +74,6 @@ paths:
                         type: string
                     type: object
                 type: array
-              $ref: '#/components/schemas/AuthResponse'
         400:
           $ref: '#/components/responses/InvalidRequest'
         500:
@@ -88,6 +88,7 @@ paths:
 
   /download/youtube:
     get:
+      deprecated: true
       description: Downloads audio file from YouTube.
       responses:
         200:

@@ -1,6 +1,6 @@
-import fs from 'fs';
-import path from 'path';
-import { ReadableStream } from 'stream/web';
+import fs from 'node:fs';
+import path from 'node:path';
+import type { ReadableStream } from 'node:stream/web';
 import { Innertube, UniversalCache } from 'youtubei.js';
 
 /**
@@ -24,7 +24,7 @@ export async function* streamToIterable(stream: ReadableStream<Uint8Array>) {
 }
 
 /**
- * Downloads audio file from YouTube.
+ * Downloads an audio file from YouTube.
  */
 export const getResource = async (
   resourceId: string,
@@ -44,7 +44,7 @@ export const getResource = async (
     fs.mkdirSync(resourceCacheDirPath);
   }
 
-  const resourcePath = path.join(resourceCacheDirPath, `${resourceId}.wav`);
+  const resourcePath = path.resolve(resourceCacheDirPath, `${resourceId}.wav`);
   const resource = fs.createWriteStream(resourcePath);
 
   return await new Promise((resolve, reject) => {

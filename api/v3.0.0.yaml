@@ -1,0 +1,261 @@
+openapi: 3.0.3
+info:
+  description: Backend service for the Symfi application.
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+  title: Symfi API
+  version: 3.0.0
+servers:
+  - description: Development server
+    url: http://localhost:5000/
+paths:
+  /v3/ping:
+    get:
+      description: Check if the service is running
+      responses:
+        '200':
+          description: Service is running
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Success'
+  /v3/song/:id:
+    get:
+      description: Download a song by its id
+      parameters:
+        - name: songId
+          in: path
+          required: true
+          schema:
+            type: string
+          example: 'dQw4w9WgXcQ'
+      responses:
+        '200':
+          description: Song found
+          content:
+            audio/mpeg3:
+              schema:
+                format: binary
+                type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '502':
+          $ref: '#/components/responses/YouTubeError'
+  /v3/song/download:
+    get:
+      description: Get the song download URL
+      parameters:
+        - name: id
+          in: query
+          required: true
+          schema:
+            type: string
+          example: 'dQw4w9WgXcQ'
+      responses:
+        '200':
+          description: Success response with the song download URL in the meta field
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Success'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '502':
+          $ref: '#/components/responses/YouTubeError'
+  /v3/song/search:
+    get:
+      description: Search for a song
+      parameters:
+        - name: q
+          in: query
+          required: true
+          schema:
+            type: string
+          example: 'despacito'
+      responses:
+        '200':
+          description: Song found
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Collection'
+                  - type: object
+                    properties:
+                      objects:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Song'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        # todo: maybe drop this response
+        '404':
+          description: Suggestions not found for the given search query
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '502':
+          $ref: '#/components/responses/YouTubeError'
+  /v3/song/suggestion:
+    get:
+      description: Get suggestions for songs
+      parameters:
+        - name: q
+          in: query
+          required: true
+          schema:
+            type: string
+          example: 'rick+astley'
+      responses:
+        '200':
+          description: Song suggestions
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Collection'
+                  - type: object
+                    properties:
+                      objects:
+                        type: array
+                        items:
+                          - type: string
+                            example: "Rick Astley - Never Gonna Give You Up"
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '502':
+          $ref: '#/components/responses/YouTubeError'
+components:
+  responses:
+    BadRequest:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: Not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    YouTubeError:
+      description: Failed to connect to the YouTube API
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  schemas:
+    Collection:
+      description: Collection of data
+      type: object
+      properties:
+        has_more:
+          type: boolean
+          example: false
+        objects:
+          type: array
+        page:
+          type: integer
+          example: 0
+    Error:
+      description: Error response
+      type: object
+      properties:
+        http_code:
+          type: integer
+          example: 400
+        message:
+          type: string
+          example: 'Bad request'
+        success:
+          description: Boolean flag
+          example: false
+          type: boolean
+        reason:
+          type: string
+          example: 'query [id]: required, must be a string'
+    Song:
+      description: Song object
+      type: object
+      properties:
+        channel:
+          description: "YouTube channel information"
+          properties:
+            name:
+              description: "Channel name"
+              example: "Rick Astley"
+              type: string
+            url:
+              description: "Channel URL"
+              example: "https://www.youtube.com/channel/UCuAXFkgsw1L7xaCfnd5JJOw"
+              type: string
+          type: object
+        duration:
+          description: "Song duration"
+          properties:
+            count:
+              description: "Duration in seconds"
+              example: 180
+              type: integer
+            label:
+              description: "Duration in human readable format"
+              example: "3:33"
+              type: string
+          type: object
+        id:
+          description: "YouTube video ID"
+          example: "dQw4w9WgXcQ"
+          type: integer
+        name:
+          description: "Song title"
+          example: "Never Gonna Give You Up"
+          type: string
+        published:
+          description: "Song publish date in human readable format"
+          example: "11 years ago"
+          type: string
+        thumbnail:
+          description: "URL to the song thumbnail"
+          example: "https://i.ytimg.com/vi/dQw4w9WgXcQ/hqdefault.jpg"
+          nullable: true
+          type: string
+        views:
+          description: "Song views count"
+          properties:
+            count:
+              description: "Views count"
+              example: 1_000_000_000
+              type: integer
+            label:
+              description: "Views count in human readable format"
+              example: "1B"
+              type: string
+          type: object
+    Success:
+      description: Success response
+      type: object
+      properties:
+        http_code:
+          description: HTTP status code
+          example: 200
+          type: integer
+        message:
+          description: Success message
+          example: 'API v3.0.0 is running'
+          type: string
+        meta:
+          description: Additional information
+          example: "https://example.com/"
+          nullable: true
+          type: string
+        success:
+          description: Boolean flag
+          example: true
+          type: boolean

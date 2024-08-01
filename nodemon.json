@@ -1,11 +1,9 @@
 {
+  "execMap": {
+    "ts": "ts-node -r tsconfig-paths/register"
+  },
   "ext": "ts",
-  "ignore": [
-    "dist",
-    "node_modules"
-  ],
-  "watch": [
-    "src"
-  ],
+  "ignore": ["dist", "node_modules"],
+  "watch": ["src"],
   "verbose": true
 }
