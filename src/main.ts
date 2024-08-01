@@ -1,14 +1,18 @@
 import 'dotenv/config';
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
 import { ApiError, ApiErrorV2 } from '@resources';
 import { v2Router, v3Router } from '@routers';
 import { Logger } from '@services';
 import cors from 'cors';
-import express, { type NextFunction, type Request, type Response } from 'express';
+import express, {
+  type NextFunction,
+  type Request,
+  type Response,
+} from 'express';
 import { rateLimit } from 'express-rate-limit';
 import { Cache } from 'file-system-cache';
-import fs from 'fs';
-import os from 'os';
-import path from 'path';
 
 export const app = express();
 const port = process.env.NODE_ENV === 'test' ? 0 : process.env.PORT || 5000;
@@ -19,7 +23,7 @@ try {
   if (!fs.existsSync(cachePath)) {
     fs.mkdirSync(cachePath);
   }
-} catch (err) {
+} catch (_err) {
   cachePath = path.join(os.tmpdir(), 'symfi');
   if (!fs.existsSync(cachePath)) {
     fs.mkdirSync(cachePath);
@@ -35,7 +39,11 @@ export const cache = new Cache({
 export const limiter = rateLimit({
   limit: 500, // max 100 requests per windowMs
   legacyHeaders: false,
-  message: new ApiErrorV2(429, 'Too Many Requests', 'You have exceeded the 100 requests in 15 minutes limit!'),
+  message: new ApiErrorV2(
+    429,
+    'Too Many Requests',
+    'You have exceeded the 100 requests in 15 minutes limit!',
+  ),
   standardHeaders: true,
   windowMs: 15 * 60 * 1000, // 15 minutes
 });
@@ -46,7 +54,9 @@ const logger = new Logger();
 app.use(cors());
 
 app.use((req, _res, next) => {
-  if (process.env.DEBUG || process.env.LOG_REQUESTS) logger.log(`${req.method} ${req.originalUrl}`);
+  if (process.env.DEBUG || process.env.LOG_REQUESTS) {
+    logger.log(`${req.method} ${req.originalUrl}`);
+  }
   next();
 });
 
@@ -54,7 +64,9 @@ app.use('/v2', limiter, v2Router);
 app.use('/v3', limiter, v3Router);
 
 app.all('*', (_req, _res, next: NextFunction) => {
-  next(new ApiErrorV2(404, 'Not Found', 'The requested resource was not found.'));
+  next(
+    new ApiErrorV2(404, 'Not Found', 'The requested resource was not found.'),
+  );
 });
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -70,5 +82,7 @@ app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
 });
 
 export const server = app.listen(port, () => {
-  logger.log(`Status: [STARTED], PORT: [${port}], Version: [v${process.env.npm_package_version}]`);
+  logger.log(
+    `Status: [STARTED], PORT: [${port}], Version: [v${process.env.npm_package_version}]`,
+  );
 });

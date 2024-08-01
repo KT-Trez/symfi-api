@@ -1,4 +1,4 @@
-import type { MediaInfo, Thumbnail, VideoInfo } from '../types';
+import type { MediaInfo, Thumbnail, VideoInfo } from '@types';
 import { ApiError } from './ApiError';
 
 export class VideoInfoToMediaInfoAdapter implements MediaInfo {
@@ -14,7 +14,7 @@ export class VideoInfoToMediaInfoAdapter implements MediaInfo {
   public title: string;
 
   constructor(video: VideoInfo) {
-    if (!video.basic_info.id || !video.basic_info.duration) {
+    if (!(video.basic_info.id && video.basic_info.duration)) {
       throw new ApiError('video data is incorrect', 502);
     }
 

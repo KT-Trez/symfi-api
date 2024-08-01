@@ -1,3 +1,5 @@
+// noinspection JSUnusedGlobalSymbols
+
 import type { Config } from 'jest';
 import { pathsToModuleNameMapper } from 'ts-jest';
 import { compilerOptions } from './tsconfig.json';
@@ -20,5 +22,5 @@ const config: Config = {
   verbose: true,
 };
 
-// noinspection JSUnusedGlobalSymbols
+// biome-ignore lint/style/noDefaultExport: it is required to correctly initialize the jest config file
 export default config;

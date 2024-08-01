@@ -1,6 +1,6 @@
 import { ApiErrorV2 } from '@resources';
 import type { NextFunction, Request, Response } from 'express';
-import { ValidationError, validationResult } from 'express-validator';
+import { type ValidationError, validationResult } from 'express-validator';
 
 const errorFormatter = (err: ValidationError) => {
   switch (err.type) {
@@ -11,11 +11,21 @@ const errorFormatter = (err: ValidationError) => {
   }
 };
 
-export const requestValidatorService = (req: Request, _: Response, next: NextFunction) => {
+export const requestValidatorService = (
+  req: Request,
+  _: Response,
+  next: NextFunction,
+) => {
   const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    next(new ApiErrorV2(400, 'Bad Request', errors.formatWith(errorFormatter).array().join('\n')));
-  } else {
+  if (errors.isEmpty()) {
     next();
+  } else {
+    next(
+      new ApiErrorV2(
+        400,
+        'Bad Request',
+        errors.formatWith(errorFormatter).array().join('\n'),
+      ),
+    );
   }
 };

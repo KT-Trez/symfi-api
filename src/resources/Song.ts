@@ -4,7 +4,11 @@ import type { Channel, Duration, Song, Views } from '@types';
 import { YTNodes } from 'youtubei.js';
 import { exhaustiveCheck } from '../utils';
 
-export type SongResourceCreatorArgs = YTNodes.CompactVideo | YTNodes.GridVideo | YTNodes.PlaylistVideo | YTNodes.Video;
+export type SongResourceCreatorArgs =
+  | YTNodes.CompactVideo
+  | YTNodes.GridVideo
+  | YTNodes.PlaylistVideo
+  | YTNodes.Video;
 
 export class SongResource implements Song {
   channel!: Channel;
@@ -19,13 +23,16 @@ export class SongResource implements Song {
     if (video instanceof YTNodes.CompactVideo) {
       this.#fromCompactVideoOrVideo(video);
       return;
-    } else if (video instanceof YTNodes.GridVideo) {
+    }
+    if (video instanceof YTNodes.GridVideo) {
       this.#fromGridVideo(video);
       return;
-    } else if (video instanceof YTNodes.PlaylistVideo) {
+    }
+    if (video instanceof YTNodes.PlaylistVideo) {
       this.#fromPlaylistVideo(video);
       return;
-    } else if (video instanceof YTNodes.Video) {
+    }
+    if (video instanceof YTNodes.Video) {
       this.#fromCompactVideoOrVideo(video);
       return;
     }
@@ -44,8 +51,14 @@ export class SongResource implements Song {
 
   #fromCompactVideoOrVideo(video: YTNodes.CompactVideo | YTNodes.Video) {
     const thumbnail =
-      video.best_thumbnail?.url || video.thumbnails.at(0)?.url || this.#getPlaceholder(video.title.toString());
-    const views = video.view_count.toString().replace(/,/g, '').split(' ').at(0);
+      video.best_thumbnail?.url ||
+      video.thumbnails.at(0)?.url ||
+      this.#getPlaceholder(video.title.toString());
+    const views = video.view_count
+      .toString()
+      .replace(/,/g, '')
+      .split(' ')
+      .at(0);
 
     this.channel = {
       name: video.author.name,
@@ -60,13 +73,15 @@ export class SongResource implements Song {
     this.published = video.published.toString();
     this.thumbnail = thumbnail;
     this.views = {
-      count: parseInt(views || '0'),
+      count: Number.parseInt(views || '0'),
       label: video.short_view_count.toString(),
     };
   }
 
   #fromGridVideo(video: YTNodes.GridVideo) {
-    const thumbnail = video.thumbnails.at(0)?.url || this.#getPlaceholder(video.title.toString());
+    const thumbnail =
+      video.thumbnails.at(0)?.url ||
+      this.#getPlaceholder(video.title.toString());
     const views = video.views.toString().replace(/,/g, '').split(' ').at(0);
 
     this.channel = {
@@ -75,20 +90,22 @@ export class SongResource implements Song {
     };
     this.duration = {
       label: video.duration?.toString() || '',
-      seconds: parseInt(video.duration?.toString() || '0'),
+      seconds: Number.parseInt(video.duration?.toString() || '0'),
     };
     this.id = video.id;
     this.name = video.title.toString();
     this.published = video.published.toString();
     this.thumbnail = thumbnail;
     this.views = {
-      count: parseInt(views || '0'),
+      count: Number.parseInt(views || '0'),
       label: video.short_view_count.toString(),
     };
   }
 
   #fromPlaylistVideo(video: YTNodes.PlaylistVideo) {
-    const thumbnail = video.thumbnails.at(0)?.url || this.#getPlaceholder(video.title.toString());
+    const thumbnail =
+      video.thumbnails.at(0)?.url ||
+      this.#getPlaceholder(video.title.toString());
 
     this.channel = {
       name: video.author.name,

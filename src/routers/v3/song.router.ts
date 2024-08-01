@@ -20,7 +20,10 @@ router.get(
 
 router.get(
   '/search',
-  query('page').optional().isInt({ min: 0 }).withMessage('optional, must be a number greater than or equal to 0'),
+  query('page')
+    .optional()
+    .isInt({ min: 0 })
+    .withMessage('optional, must be a number greater than or equal to 0'),
   query('q')
     .exists()
     .withMessage('required')

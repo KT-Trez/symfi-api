@@ -1,11 +1,10 @@
-// noinspection ES6UnusedImports
-import { NextFunction, Request, Response } from 'express';
-import fs from 'fs';
+import fs from 'node:fs';
+import { cache } from '@app';
+import { ApiError, VideoInfoToMediaInfoAdapter } from '@resources';
+import { getResource } from '@services';
+import type { MediaInfo, VideoInfo } from '@types';
+import type { NextFunction, Request, Response } from 'express';
 import { Innertube, UniversalCache } from 'youtubei.js';
-import { cache } from '../../main';
-import { ApiError, VideoInfoToMediaInfoAdapter } from '../../resources';
-import { getResource } from '../../services';
-import type { MediaInfo, VideoInfo } from '../../types';
 
 const checkIdsCorrectness = async (
   req: Request<Record<string, never>, MediaInfo[], string[]>,
@@ -19,13 +18,18 @@ const checkIdsCorrectness = async (
   });
 
   const requestedMediaInfo: Promise<VideoInfo>[] = [];
-  ids.forEach(id => requestedMediaInfo.push(youtube.getInfo(id)));
+  for (const id of ids) {
+    requestedMediaInfo.push(youtube.getInfo(id));
+  }
 
   const mediaInfoPromises = await Promise.allSettled(requestedMediaInfo);
 
   try {
     const data = mediaInfoPromises
-      .filter((promise): promise is PromiseFulfilledResult<VideoInfo> => promise.status === 'fulfilled')
+      .filter(
+        (promise): promise is PromiseFulfilledResult<VideoInfo> =>
+          promise.status === 'fulfilled',
+      )
       .map(({ value }) => new VideoInfoToMediaInfoAdapter(value));
 
     res.status(200).json(data);
@@ -34,13 +38,18 @@ const checkIdsCorrectness = async (
   }
 };
 
-const streamAudio = async (req: Request<{ id: string }>, res: Response, next: NextFunction) => {
-  // get resource id and path to resource if it's cached
+const streamAudio = async (
+  req: Request<{ id: string }>,
+  res: Response,
+  next: NextFunction,
+) => {
+  // get resource id and path to resource if it is cached
   const resourceID = decodeURI(req.params.id);
   const cachedPath = cache.getSync(resourceID);
 
   try {
-    // if resource was already downloaded (path to resource was cached), stream downloaded resource
+    // if the resource was already downloaded (the path to resource was cached),
+    // stream downloaded resource
     if (cachedPath) {
       return fs.createReadStream(cachedPath).pipe(res);
     }

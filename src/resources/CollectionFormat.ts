@@ -17,7 +17,7 @@ export class CollectionFormatResource<T> {
 
     const { has_more, objects, page } = collection;
 
-    this.has_more = has_more || false;
+    this.has_more = !!has_more;
     this.objects = objects || [];
     this.page = page || DEFAULT_PAGE;
   }

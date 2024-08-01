@@ -1,4 +1,6 @@
 /* eslint-disable no-console */
+import { exhaustiveCheck } from '../utils';
+
 export const LOG_LEVEL_CONST = {
   DEBUG: 'DEBUG',
   ERROR: 'ERROR',
@@ -18,7 +20,7 @@ export class Logger {
     WARNING: 'WARNING',
   };
 
-  static labelsLength: number = 7;
+  static labelsLength = 7;
 
   static palette: Record<LOG_LEVEL, string> = {
     DEBUG: '\u001b[30;1m',
@@ -43,7 +45,10 @@ export class Logger {
       second: '2-digit',
       year: 'numeric',
     }).format(new Date());
-    const pad = ''.padEnd(Logger.labelsLength - Logger.labels[options].length, ' ');
+    const pad = ''.padEnd(
+      Logger.labelsLength - Logger.labels[options].length,
+      ' ',
+    );
     const severity = this.color(Logger.labels[options], options);
 
     switch (options) {
@@ -62,6 +67,8 @@ export class Logger {
       case LOG_LEVEL_CONST.WARNING:
         console.warn(`${timestamp}${pad} [${severity}] ${message}`);
         break;
+      default:
+        exhaustiveCheck(options);
     }
   }
 }
