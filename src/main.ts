@@ -10,13 +10,8 @@ import fs from 'fs';
 import os from 'os';
 import path from 'path';
 
-if (process.env.NODE_ENV === 'test') {
-  delete process.env.DEBUG;
-  delete process.env.LOG_REQUESTS;
-}
-
 export const app = express();
-const port = process.env.PORT || 5000;
+const port = process.env.NODE_ENV === 'test' ? 0 : process.env.PORT || 5000;
 
 // initialize cache
 let cachePath = path.resolve('cache');
@@ -74,9 +69,6 @@ app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
   }
 });
 
-// start express
-if (process.env.NODE_ENV !== 'test') {
-  app.listen(port, () => {
-    logger.log(`Status: [STARTED], PORT: [${port}], Version: [v${process.env.npm_package_version}]`);
-  });
-}
+export const server = app.listen(port, () => {
+  logger.log(`Status: [STARTED], PORT: [${port}], Version: [v${process.env.npm_package_version}]`);
+});

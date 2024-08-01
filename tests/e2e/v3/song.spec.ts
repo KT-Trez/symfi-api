@@ -1,5 +1,5 @@
-import request from 'supertest';
-import { app } from '../../src/main';
+import { app, server } from '@app';
+import supertest from 'supertest';
 
 type ErrorTestCase = {
   message: string;
@@ -12,45 +12,14 @@ type SuccessTestCase = {
   params?: Record<string, unknown>;
 };
 
-describe('Test "/v3/song" route', () => {
-  beforeAll(() => {
-    delete process.env.DEBUG;
+describe('test "/v3/song" router', () => {
+  const agent = supertest(app);
+
+  afterAll(() => {
+    server.close();
   });
 
-  describe('GET /v3/song/:id', () => {
-    const errorTestCases: ErrorTestCase[] = [
-      {
-        message: 'Not Found',
-        params: { id: 'invalid-id' },
-        reason: 'The requested video was not found.',
-        status: 404,
-      },
-    ];
-
-    it.each(errorTestCases)(
-      `should return an error for the param: $params`,
-      async ({ message, params, reason, status }) => {
-        const res = await request(app).get(`/v3/song/${params?.id}`);
-
-        expect(res.body.reason).toEqual(reason);
-        expect(res.body.message).toEqual(message);
-        expect(res.body.http_status).toEqual(status);
-        expect(res.status).toBe(status);
-      },
-    );
-
-    const successTestCases: SuccessTestCase[] = [{ params: { id: 'dQw4w9WgXcQ' } }];
-
-    it.each(successTestCases)(`should return song info for the param: $params`, async ({ params }) => {
-      const res = await request(app).get(`/v3/song/${params?.id}`);
-
-      expect(res.status).toBe(200);
-      expect(res.get('Connection')).toMatch(/close/);
-      expect(res.get('Transfer-Encoding')).toMatch(/chunked/);
-    });
-  });
-
-  describe('GET /v3/song/download', () => {
+  describe('test "/v3/song/download" endpoint', () => {
     const errorTestCases: ErrorTestCase[] = [
       {
         message: 'Bad Request',
@@ -80,9 +49,7 @@ describe('Test "/v3/song" route', () => {
     it.each(errorTestCases)(
       `should return an error for the query: $params`,
       async ({ message, params, reason, status }) => {
-        const res = await request(app)
-          .get('/v3/song/download')
-          .query(params || {});
+        const res = await agent.get('/v3/song/download').query(params || {});
 
         expect(res.body.reason).toEqual(reason);
         expect(res.body.message).toEqual(message);
@@ -94,9 +61,7 @@ describe('Test "/v3/song" route', () => {
     const successTestCases: SuccessTestCase[] = [{ params: { id: 'dQw4w9WgXcQ' } }];
 
     it.each(successTestCases)(`should return download link for the query: $params`, async ({ params }) => {
-      const res = await request(app)
-        .get('/v3/song/download')
-        .query(params || {});
+      const res = await agent.get('/v3/song/download').query(params || {});
 
       expect(res.status).toBe(200);
       expect(res.body.http_status).toEqual(200);
@@ -106,7 +71,7 @@ describe('Test "/v3/song" route', () => {
     });
   });
 
-  describe('GET /v3/song/search', () => {
+  describe('test "/v3/song/search" endpoint', () => {
     const errorTestCases: ErrorTestCase[] = [
       {
         message: 'Bad Request',
@@ -130,9 +95,7 @@ describe('Test "/v3/song" route', () => {
     it.each(errorTestCases)(
       `should return an error for the search query: $params`,
       async ({ message, params, reason, status }) => {
-        const res = await request(app)
-          .get('/v3/song/search')
-          .query(params || {});
+        const res = await agent.get('/v3/song/search').query(params || {});
 
         expect(res.body.reason).toEqual(reason);
         expect(res.body.message).toEqual(message);
@@ -144,9 +107,7 @@ describe('Test "/v3/song" route', () => {
     const successTestCases: SuccessTestCase[] = [{ params: { q: 'rick' } }, { params: { q: 123 } }];
 
     it.each(successTestCases)(`should return search results for the search query: $params`, async ({ params }) => {
-      const res = await request(app)
-        .get('/v3/song/search')
-        .query(params || {});
+      const res = await agent.get('/v3/song/search').query(params || {});
 
       expect(res.status).toBe(200);
       expect(res.body).toHaveProperty('objects');
@@ -154,7 +115,7 @@ describe('Test "/v3/song" route', () => {
     });
   });
 
-  describe('GET /v3/song/suggestions', () => {
+  describe('test "/v3/song/suggestion" endpoint', () => {
     const errorTestCases: ErrorTestCase[] = [
       {
         message: 'Bad Request',
@@ -178,9 +139,7 @@ describe('Test "/v3/song" route', () => {
     it.each(errorTestCases)(
       `should return an error for the search query: $params`,
       async ({ params, reason, status }) => {
-        const res = await request(app)
-          .get('/v3/song/suggestion')
-          .query(params || {});
+        const res = await agent.get('/v3/song/suggestion').query(params || {});
 
         expect(res.body.reason).toEqual(reason);
         // expect(res.body.message).toEqual(message); // strange but, but the third error case doesn't have message, fml
@@ -192,13 +151,44 @@ describe('Test "/v3/song" route', () => {
     const successTestCases: SuccessTestCase[] = [{ params: { q: 'rick' } }, { params: { q: 123 } }];
 
     it.each(successTestCases)(`should return search suggestions for the search query: $params`, async ({ params }) => {
-      const res = await request(app)
-        .get('/v3/song/suggestion')
-        .query(params || {});
+      const res = await agent.get('/v3/song/suggestion').query(params || {});
 
       expect(res.status).toBe(200);
       expect(res.body).toHaveProperty('objects');
       expect(res.body.objects.length).toBeGreaterThan(0);
+    });
+  });
+
+  describe('test "/v3/song/:id" endpoint', () => {
+    const errorTestCases: ErrorTestCase[] = [
+      {
+        message: 'Not Found',
+        params: { id: 'invalid-id' },
+        reason: 'The requested video was not found.',
+        status: 404,
+      },
+    ];
+
+    it.each(errorTestCases)(
+      `should return an error for the param: $params`,
+      async ({ message, params, reason, status }) => {
+        const res = await agent.get(`/v3/song/${params?.id}`);
+
+        expect(res.body.reason).toEqual(reason);
+        expect(res.body.message).toEqual(message);
+        expect(res.body.http_status).toEqual(status);
+        expect(res.status).toBe(status);
+      },
+    );
+
+    const successTestCases: SuccessTestCase[] = [{ params: { id: 'dQw4w9WgXcQ' } }];
+
+    it.each(successTestCases)(`should return song info for the param: $params`, async ({ params }) => {
+      const res = await agent.get(`/v3/song/${params?.id}`);
+
+      expect(res.status).toBe(200);
+      expect(res.get('Connection')).toMatch(/close/);
+      expect(res.get('Transfer-Encoding')).toMatch(/chunked/);
     });
   });
 });
