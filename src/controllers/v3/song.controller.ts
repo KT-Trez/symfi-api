@@ -2,7 +2,7 @@ import {
   ApiErrorV2,
   ApiSuccess,
   CollectionFormatResource,
-  SongResource,
+  SongResource
 } from '@resources';
 import type { CollectionFormat, NoBody, NoParams, NoQuery, Song } from '@types';
 import type { NextFunction, Request, Response } from 'express';
@@ -148,36 +148,36 @@ const songId = async (
 
     res.end();
   } catch (err) {
-    if (
-      err instanceof Error &&
-      /this video is unavailable/i.test(err.message)
-    ) {
-      next(
-        new ApiErrorV2(404, 'Not Found', 'The requested video was not found.'),
+    const isError = err instanceof Error;
+
+    if (isError && /this video is unavailable/i.test(err.message)) {
+      const error = new ApiErrorV2(
+        404,
+        'Not Found',
+        'The requested video was not found.'
       );
-      return;
+
+      return next(error);
     }
-    if (
-      err instanceof Error &&
-      /no matching formats found/i.test(err.message)
-    ) {
-      next(
-        new ApiErrorV2(
-          404,
-          'Not Found',
-          'Matching formats in the requested video were not found.',
-        ),
+
+    if (isError && /no matching formats found/i.test(err.message)) {
+      const error = new ApiErrorV2(
+        404,
+        'Not Found',
+        'Matching formats in the requested video were not found.'
       );
-      return;
+
+      return next(error);
     }
-    next(
-      new ApiErrorV2(
-        502,
-        'Bad Gateway',
-        'Cannot connect to YouTube servers at the moment.',
-        err,
-      ),
+
+    const error = new ApiErrorV2(
+      502,
+      'Bad Gateway',
+      'Cannot connect to YouTube servers at the moment.',
+      err
     );
+
+    next(error);
   }
 };
 
