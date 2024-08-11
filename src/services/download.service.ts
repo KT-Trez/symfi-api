@@ -31,12 +31,14 @@ export const getResource = async (
   resourceType: 'audio' | 'video' | 'video+audio' = 'audio',
 ): Promise<string> => {
   const youtube = await Innertube.create({
-    cache: new UniversalCache(false),
+    cache: new UniversalCache(true),
+    generate_session_locally: true
   });
 
   const stream = await youtube.download(resourceId, {
     type: resourceType,
-    quality: 'best',
+    // todo: fix in youtubei.js
+    // quality: 'best',
   });
 
   const resourceCacheDirPath = path.resolve('cache');

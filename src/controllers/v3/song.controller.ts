@@ -133,13 +133,15 @@ const songId = async (
 
   const youtube = await Innertube.create({
     cache: new UniversalCache(true),
+    generate_session_locally: true,
   });
 
   try {
     const stream = await youtube.download(id, {
-      format: 'webm',
+      // todo: fix in youtubei.js
+      // format: 'm4a',
       type: 'audio',
-      quality: 'best',
+      // quality: 'best',
     });
 
     for await (const chunk of Utils.streamToIterable(stream)) {
