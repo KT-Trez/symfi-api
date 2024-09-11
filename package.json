@@ -15,7 +15,7 @@
     "express-validator": "^7.1.0",
     "file-system-cache": "2.4.7",
     "tsconfig-paths": "^4.2.0",
-    "youtubei.js": "^10.3.0"
+    "youtubei.js": "10.4.0"
   },
   "description": "",
   "devDependencies": {
@@ -53,5 +53,5 @@
     "test": "jest",
     "typecheck": "tsc --noEmit"
   },
-  "version": "4.0.0-3"
+  "version": "4.0.0-4"
 }
