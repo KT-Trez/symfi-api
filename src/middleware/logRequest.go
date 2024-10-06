@@ -12,6 +12,6 @@ func LogRequest(h http.Handler) http.Handler {
 		h.ServeHTTP(w, r)
 		duration := time.Since(start)
 
-		fmt.Printf("%s %s %s", r.Method, r.RequestURI, duration)
+		fmt.Printf("%s %s %s\n", r.Method, r.RequestURI, duration)
 	})
 }

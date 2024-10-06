@@ -1,4 +1,4 @@
-module symfi.was.org.pl
+module github.com/KT-Trez/syfi-api
 
 go 1.23.2
 

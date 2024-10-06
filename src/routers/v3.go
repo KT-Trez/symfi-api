@@ -1,8 +1,8 @@
 package routers
 
 import (
+	"github.com/KT-Trez/syfi-api/src/controllers"
 	"github.com/gorilla/mux"
-	"symfi.was.org.pl/src/controllers"
 )
 
 func NewV3Router(r *mux.Router) {
@@ -10,5 +10,5 @@ func NewV3Router(r *mux.Router) {
 
 	newSongRouter(router)
 
-	router.HandleFunc("/ping", controllers.GET_Ping)
+	router.HandleFunc("/ping", controllers.GetPing)
 }

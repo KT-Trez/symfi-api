@@ -1,10 +1,12 @@
 package main
 
 import (
+	"fmt"
+	"github.com/KT-Trez/syfi-api/config"
+	"github.com/KT-Trez/syfi-api/src/middleware"
+	"github.com/KT-Trez/syfi-api/src/routers"
 	"github.com/gorilla/mux"
 	"net/http"
-	"symfi.was.org.pl/src/middleware"
-	"symfi.was.org.pl/src/routers"
 )
 
 func main() {
@@ -13,5 +15,9 @@ func main() {
 	r.Use(middleware.LogRequest)
 	routers.NewV3Router(r)
 
-	http.ListenAndServe(":5000", r)
+	fmt.Printf("starting server version %s", config.Version)
+	err := http.ListenAndServe(":5000", r)
+	if err != nil {
+		panic("failed to start the server")
+	}
 }
