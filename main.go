@@ -15,9 +15,10 @@ func main() {
 	r.Use(middleware.LogRequest)
 	routers.NewV3Router(r)
 
-	fmt.Printf("starting server version %s", config.Version)
-	err := http.ListenAndServe(":5000", r)
+	fmt.Printf("Status: [STARTING], PORT: [%s], Version: [%s]\n", config.Port, config.Version)
+	err := http.ListenAndServe(config.Port, r)
+
 	if err != nil {
-		panic("failed to start the server")
+		panic(err)
 	}
 }

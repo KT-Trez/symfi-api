@@ -9,6 +9,8 @@ info:
 servers:
   - description: Development server
     url: http://localhost:5000/
+  - description: Primary server
+    url: https://symfi-api.was.org.pl
 paths:
   /v3/ping:
     get:
@@ -20,11 +22,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Success'
-  /v3/song/:id:
+  /v3/song/{id}:
     get:
+      deprecated: true
       description: Download a song by its id
       parameters:
-        - name: songId
+        - name: id
           in: path
           required: true
           schema:
@@ -34,7 +37,7 @@ paths:
         '200':
           description: Song found
           content:
-            audio/mpeg3:
+            audio/webm:
               schema:
                 format: binary
                 type: string
@@ -46,10 +49,34 @@ paths:
           $ref: '#/components/responses/YouTubeError'
   /v3/song/download:
     get:
+      deprecated: true
       description: Get the song download URL
       parameters:
         - name: id
           in: query
+          required: true
+          schema:
+            type: string
+          example: 'dQw4w9WgXcQ'
+      responses:
+        '200':
+          description: Success response with the song download URL in the meta field
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Success'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '502':
+          $ref: '#/components/responses/YouTubeError'
+  /v3/song/meta/{id}:
+    get:
+      description: Get the song download URL
+      parameters:
+        - name: id
+          in: path
           required: true
           schema:
             type: string
@@ -100,6 +127,30 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+        '502':
+          $ref: '#/components/responses/YouTubeError'
+  /v3/song/stream/{id}:
+    get:
+      description: Download a song by its id
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          example: 'dQw4w9WgXcQ'
+      responses:
+        '200':
+          description: Song found
+          content:
+            audio/webm:
+              schema:
+                format: binary
+                type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
         '502':
           $ref: '#/components/responses/YouTubeError'
   /v3/song/suggestion:
@@ -212,7 +263,7 @@ components:
         id:
           description: "YouTube video ID"
           example: "dQw4w9WgXcQ"
-          type: integer
+          type: string
         name:
           description: "Song title"
           example: "Never Gonna Give You Up"

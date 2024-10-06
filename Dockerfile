@@ -1,4 +1,4 @@
-FROM node:20
+FROM golang:1.23
 
 LABEL authors="kttrez"
 LABEL name="symfi-api"
@@ -7,10 +7,10 @@ EXPOSE 5000
 
 WORKDIR /usr/src/app
 
-COPY dist ./dist
-COPY package*.json ./
-COPY tsconfig.json ./
+COPY go.mod go.sum ./
+RUN go mod download
 
-RUN npm ci
+COPY . .
+RUN make build
 
-CMD ["npm", "run", "start"]
+CMD ["./symfi.was.org.pl"]
