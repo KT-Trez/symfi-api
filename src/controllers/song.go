@@ -6,7 +6,6 @@ import (
 	"github.com/kkdai/youtube/v2"
 	"io"
 	"net/http"
-	"strconv"
 )
 
 func GetSongStream(res http.ResponseWriter, req *http.Request) {
@@ -43,7 +42,6 @@ func GetSongStream(res http.ResponseWriter, req *http.Request) {
 	}(stream)
 
 	res.Header().Set("Content-Type", "audio/webm")
-	res.Header().Set("Content-Length", strconv.FormatInt(video.Formats[0].ContentLength, 10))
 	_, err = io.Copy(res, stream)
 
 	if err != nil {
