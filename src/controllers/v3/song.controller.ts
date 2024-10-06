@@ -2,7 +2,7 @@ import {
   ApiErrorV2,
   ApiSuccess,
   CollectionFormatResource,
-  SongResource
+  SongResource,
 } from '@resources';
 import type { CollectionFormat, NoBody, NoParams, NoQuery, Song } from '@types';
 import type { NextFunction, Request, Response } from 'express';
@@ -30,7 +30,10 @@ const download = async (
       const origin = process.env.PROXY_DOWNLOAD_ORIGIN || dynamicOrigin;
 
       const dynamicPath = `/v3/song/${id}`;
-      const path = (process.env.PROXY_DOWNLOAD_STREAM_ENDPOINT?.match(/true/i) && `/v3/song/stream/${id}`) || dynamicPath;
+      const path =
+        (process.env.PROXY_DOWNLOAD_STREAM_ENDPOINT?.match(/true/i) &&
+          `/v3/song/stream/${id}`) ||
+        dynamicPath;
 
       const url = new URL(path, origin);
 
@@ -159,7 +162,7 @@ const songId = async (
       const error = new ApiErrorV2(
         404,
         'Not Found',
-        'The requested video was not found.'
+        'The requested video was not found.',
       );
 
       return next(error);
@@ -169,7 +172,7 @@ const songId = async (
       const error = new ApiErrorV2(
         404,
         'Not Found',
-        'Matching formats in the requested video were not found.'
+        'Matching formats in the requested video were not found.',
       );
 
       return next(error);
@@ -179,7 +182,7 @@ const songId = async (
       502,
       'Bad Gateway',
       'Cannot connect to YouTube servers at the moment.',
-      err
+      err,
     );
 
     next(error);

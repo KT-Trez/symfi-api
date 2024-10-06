@@ -1,10 +1,7 @@
 {
   "$schema": "https://biomejs.dev/schemas/1.8.3/schema.json",
   "files": {
-    "ignore": [
-      "package.json",
-      "package-lock.json"
-    ],
+    "ignore": ["package.json", "package-lock.json"],
     "include": ["**/*.ts", "**/*.json"]
   },
   "formatter": {
