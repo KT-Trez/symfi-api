@@ -14,6 +14,7 @@ const download = async (
   next: NextFunction,
 ) => {
   const id = req.query.id;
+  const isProxyEnabled = process.env.PROXY_DOWNLOAD_ENABLED?.match(/true/i);
 
   try {
     // search instance of the YouTube's API
@@ -24,13 +25,16 @@ const download = async (
     const info = await youtube.getBasicInfo(id);
 
     // redirect request to the local endpoint that streams audio
-    if (process.env.PROXY_DOWNLOAD_ENABLED) {
-      const origin =
-        process.env.PROXY_DOWNLOAD_ORIGIN ||
-        `${req.protocol}://${req.get('host')}`;
-      const redirect = new URL(`/v3/song/${id}`, origin);
-      res.status(200).json(new ApiSuccess('Video found', redirect.href));
-      return;
+    if (isProxyEnabled) {
+      const dynamicOrigin = `${req.protocol}://${req.get('host')}`;
+      const origin = process.env.PROXY_DOWNLOAD_ORIGIN || dynamicOrigin;
+
+      const dynamicPath = `/v3/song/${id}`;
+      const path = (process.env.PROXY_DOWNLOAD_STREAM_ENDPOINT?.match(/true/i) && `/v3/song/stream/${id}`) || dynamicPath;
+
+      const url = new URL(path, origin);
+
+      return res.status(200).json(new ApiSuccess('Video found', url.href));
     }
 
     const format = info.chooseFormat({
@@ -138,10 +142,9 @@ const songId = async (
 
   try {
     const stream = await youtube.download(id, {
-      // todo: fix in youtubei.js
-      // format: 'm4a',
+      format: 'webm',
       type: 'audio',
-      // quality: 'best',
+      quality: 'best',
     });
 
     for await (const chunk of Utils.streamToIterable(stream)) {
