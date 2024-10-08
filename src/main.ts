@@ -6,11 +6,7 @@ import { ApiError, ApiErrorV2 } from '@resources';
 import { v2Router, v3Router } from '@routers';
 import { Logger } from '@services';
 import cors from 'cors';
-import express, {
-  type NextFunction,
-  type Request,
-  type Response,
-} from 'express';
+import express, { type NextFunction, type Request, type Response } from 'express';
 import { rateLimit } from 'express-rate-limit';
 import { Cache } from 'file-system-cache';
 
@@ -39,11 +35,7 @@ export const cache = new Cache({
 export const limiter = rateLimit({
   limit: 500, // max 100 requests per windowMs
   legacyHeaders: false,
-  message: new ApiErrorV2(
-    429,
-    'Too Many Requests',
-    'You have exceeded the 100 requests in 15 minutes limit!',
-  ),
+  message: new ApiErrorV2(429, 'Too Many Requests', 'You have exceeded the 100 requests in 15 minutes limit!'),
   standardHeaders: true,
   windowMs: 15 * 60 * 1000, // 15 minutes
 });
@@ -64,9 +56,7 @@ app.use('/v2', limiter, v2Router);
 app.use('/v3', limiter, v3Router);
 
 app.all('*', (_req, _res, next: NextFunction) => {
-  next(
-    new ApiErrorV2(404, 'Not Found', 'The requested resource was not found.'),
-  );
+  next(new ApiErrorV2(404, 'Not Found', 'The requested resource was not found.'));
 });
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -82,7 +72,5 @@ app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
 });
 
 export const server = app.listen(port, () => {
-  logger.log(
-    `Status: [STARTED], PORT: [${port}], Version: [v${process.env.npm_package_version}]`,
-  );
+  logger.log(`Status: [STARTED], PORT: [${port}], Version: [v${process.env.npm_package_version}]`);
 });

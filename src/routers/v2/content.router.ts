@@ -30,9 +30,7 @@ router.use(express.json());
 
 router.post(
   '/check',
-  body()
-    .isArray({ min: 1 })
-    .withMessage('incorrect payload, ids to check should be an array'),
+  body().isArray({ min: 1 }).withMessage('incorrect payload, ids to check should be an array'),
   requestValidatorService,
   contentController.checkIdsCorrectness,
 );
