@@ -11,21 +11,11 @@ const errorFormatter = (err: ValidationError) => {
   }
 };
 
-export const requestValidatorService = (
-  req: Request,
-  _: Response,
-  next: NextFunction,
-) => {
+export const requestValidatorService = (req: Request, _: Response, next: NextFunction) => {
   const errors = validationResult(req);
   if (errors.isEmpty()) {
     next();
   } else {
-    next(
-      new ApiErrorV2(
-        400,
-        'Bad Request',
-        errors.formatWith(errorFormatter).array().join('\n'),
-      ),
-    );
+    next(new ApiErrorV2(400, 'Bad Request', errors.formatWith(errorFormatter).array().join('\n')));
   }
 };

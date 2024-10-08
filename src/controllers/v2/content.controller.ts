@@ -26,10 +26,7 @@ const checkIdsCorrectness = async (
 
   try {
     const data = mediaInfoPromises
-      .filter(
-        (promise): promise is PromiseFulfilledResult<VideoInfo> =>
-          promise.status === 'fulfilled',
-      )
+      .filter((promise): promise is PromiseFulfilledResult<VideoInfo> => promise.status === 'fulfilled')
       .map(({ value }) => new VideoInfoToMediaInfoAdapter(value));
 
     res.status(200).json(data);
@@ -38,11 +35,7 @@ const checkIdsCorrectness = async (
   }
 };
 
-const streamAudio = async (
-  req: Request<{ id: string }>,
-  res: Response,
-  next: NextFunction,
-) => {
+const streamAudio = async (req: Request<{ id: string }>, res: Response, next: NextFunction) => {
   // get resource id and path to resource if it is cached
   const resourceID = decodeURI(req.params.id);
   const cachedPath = cache.getSync(resourceID);
