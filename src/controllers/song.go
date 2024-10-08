@@ -1,12 +1,51 @@
 package controllers
 
 import (
+	"encoding/json"
 	"fmt"
+	"github.com/KT-Trez/syfi-api/src/models"
 	"github.com/gorilla/mux"
 	"github.com/kkdai/youtube/v2"
 	"io"
 	"net/http"
 )
+
+func GetSongMeta(res http.ResponseWriter, req *http.Request) {
+	client := youtube.Client{}
+
+	vars := mux.Vars(req)
+
+	id := vars["id"]
+	if id == "" {
+		fmt.Println("id param is invalid")
+		return
+	}
+
+	_, err := client.GetVideo(id)
+	if err != nil {
+		fmt.Println("video does not exist", err)
+		return
+	}
+
+	proto := "http"
+	if req.TLS != nil {
+		proto = "https"
+	}
+
+	uri := fmt.Sprintf("%s://%s/v3/song/stream/%s", proto, req.Host, id)
+
+	res.Header().Set("Content-Type", "application/json")
+	err = json.NewEncoder(res).Encode(models.ApiSuccess{
+		HttpCode: http.StatusOK,
+		Message:  "Video found",
+		Meta:     &uri,
+		Success:  true,
+	})
+
+	if err != nil {
+		return
+	}
+}
 
 func GetSongStream(res http.ResponseWriter, req *http.Request) {
 	client := youtube.Client{}

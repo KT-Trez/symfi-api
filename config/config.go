@@ -1,10 +1,13 @@
 package config
 
-import "os"
+import (
+	"fmt"
+	"os"
+)
 
 var Port = func() string {
-	if port := os.Getenv("APP_PORT"); port != "" {
-		return port
+	if port := os.Getenv("PORT"); port != "" {
+		return fmt.Sprintf(":%s", port)
 	}
 
 	return ":5000"
