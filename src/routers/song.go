@@ -10,4 +10,5 @@ func newSongRouter(r *mux.Router) {
 
 	router.HandleFunc("/meta/{id}", controllers.GetSongMeta).Methods("GET")
 	router.HandleFunc("/stream/{id}", controllers.GetSongStream).Methods("GET")
+	router.HandleFunc("/streaming", controllers.GetSongStreaming).Methods("GET")
 }

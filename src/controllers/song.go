@@ -3,6 +3,7 @@ package controllers
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/KT-Trez/syfi-api/config"
 	"github.com/KT-Trez/syfi-api/src/models"
 	"github.com/gorilla/mux"
 	"github.com/kkdai/youtube/v2"
@@ -85,6 +86,28 @@ func GetSongStream(res http.ResponseWriter, req *http.Request) {
 
 	if err != nil {
 		fmt.Println("failed to stream song")
+		return
+	}
+}
+
+func GetSongStreaming(res http.ResponseWriter, _ *http.Request) {
+	var isStreamingSupportedFlag string
+
+	if config.IsStreamingSupported {
+		isStreamingSupportedFlag = "1"
+	} else {
+		isStreamingSupportedFlag = "0"
+	}
+
+	res.Header().Set("Content-Type", "application/json")
+	err := json.NewEncoder(res).Encode(models.ApiSuccess{
+		HttpCode: http.StatusOK,
+		Message:  "Is streaming supported | 0: false | 1: true |",
+		Meta:     &isStreamingSupportedFlag,
+		Success:  true,
+	})
+
+	if err != nil {
 		return
 	}
 }
