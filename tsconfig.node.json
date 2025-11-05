@@ -9,5 +9,5 @@
     "sourceMap": true
   },
   "extends": "./tsconfig.json",
-  "include": ["src"]
+  "include": ["src", "vitest.config.ts"]
 }

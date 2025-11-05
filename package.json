@@ -9,7 +9,6 @@
   },
   "dependencies": {
     "cors": "2.8.5",
-    "dotenv": "17.2.3",
     "express": "5.1.0",
     "express-rate-limit": "7.5.1",
     "express-validator": "7.3.0",
@@ -22,15 +21,11 @@
     "@biomejs/biome": "2.3.4",
     "@types/cors": "2.8.19",
     "@types/express": "5.0.5",
-    "@types/jest": "30.0.0",
     "@types/node": "^22.2.0",
     "@types/supertest": "6.0.3",
-    "jest": "30.2.0",
-    "nodemon": "3.1.10",
     "supertest": "7.1.4",
-    "ts-jest": "29.4.5",
-    "ts-node": "10.9.2",
-    "typescript": "5.9.3"
+    "typescript": "5.9.3",
+    "vitest": "^4.0.7"
   },
   "engines": {
     "node": ">=20.0.0"
@@ -45,11 +40,12 @@
   },
   "scripts": {
     "build": "tsc",
+    "coverage": "vitest run --coverage",
     "lint": "biome check",
     "lint:fix": "biome check --write",
     "serve": "node --env-file=.env --experimental-strip-types --watch src/main.ts",
     "start": "node --env-file=.env --experimental-strip-types src/main.ts",
-    "test": "jest",
+    "test": "vitest",
     "typecheck": "tsc --noEmit"
   },
   "type": "module",

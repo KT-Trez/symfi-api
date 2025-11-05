@@ -16,7 +16,7 @@ const checkIdsCorrectness = async (
   const ids = req.body;
 
   const youtube = await Innertube.create({
-    cache: new UniversalCache(false),
+    cache: new UniversalCache(true),
   });
 
   const requestedMediaInfo: Promise<VideoInfo>[] = [];

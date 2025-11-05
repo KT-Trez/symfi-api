@@ -27,7 +27,7 @@ const getMediaURL = async (
 
   // search instance of the YouTube's API
   const youtube = await Innertube.create({
-    cache: new UniversalCache(false),
+    cache: new UniversalCache(true),
   });
 
   // find an external media stream, extract and send its link to the client

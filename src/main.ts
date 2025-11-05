@@ -1,4 +1,3 @@
-import 'dotenv/config';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
@@ -6,14 +5,16 @@ import cors from 'cors';
 import express, { type NextFunction, type Request, type Response } from 'express';
 import { rateLimit } from 'express-rate-limit';
 import { Cache } from 'file-system-cache';
-import { Platform } from 'youtubei.js';
+import { Log, Platform } from 'youtubei.js';
 import { ApiError, ApiErrorV2 } from './resources/ApiError.ts';
 import { v2Router } from './routers/v2.router.ts';
 import { v3Router } from './routers/v3.router.ts';
 import { Logger } from './services/logger.service.ts';
 import { createJavaScriptInterpreter } from './utils/createJavaScriptInterpreter.ts';
 
+Log.setLevel(Log.Level.ERROR);
 Platform.shim.eval = createJavaScriptInterpreter();
+
 export const app = express();
 const port = process.env.NODE_ENV === 'test' ? 0 : process.env.PORT || 5000;
 

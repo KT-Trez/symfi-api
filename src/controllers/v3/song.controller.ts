@@ -37,6 +37,7 @@ const download = async (
     }
 
     const format = info.chooseFormat({
+      client: 'YTMUSIC',
       quality: 'best',
       type: 'audio',
     });
@@ -114,14 +115,11 @@ const songId = async (
 ) => {
   const id = req.params.id;
 
-  const youtube = await Innertube.create({
-    cache: new UniversalCache(true),
-    generate_session_locally: true,
-  });
+  const youtube = await Innertube.create({ cache: new UniversalCache(true) });
 
   try {
     const stream = await youtube.download(id, {
-      format: 'webm',
+      client: 'YTMUSIC',
       quality: 'best',
       type: 'audio',
     });

@@ -19,7 +19,7 @@ const searchThroughYouTube = async (
   const query = decodeURI(req.query.query);
 
   const youtube = await Innertube.create({
-    cache: new UniversalCache(false),
+    cache: new UniversalCache(true),
   });
 
   console.log(query);

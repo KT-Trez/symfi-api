@@ -32,5 +32,7 @@ export const getResource = async (
     resource.write(chunk);
   }
 
+  resource.end();
+
   return resourcePath;
 };
