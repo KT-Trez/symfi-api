@@ -31,7 +31,7 @@ const getMediaURL = async (
   try {
     const videoInfo = await youtube.getInfo(id);
     const audioLink = videoInfo.chooseFormat({
-      quality: 'best',
+      // quality: 'best',
       type: 'audio',
     });
 

@@ -42,7 +42,7 @@ const download = async (
 
     const format = info.chooseFormat({
       client: 'YTMUSIC',
-      quality: 'best',
+      // quality: 'best',
       type: 'audio',
     });
 
