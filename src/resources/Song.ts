@@ -1,8 +1,6 @@
-// noinspection SuspiciousTypeOfGuard
-
-import type { Channel, Duration, Song, Views } from '@types';
 import { YTNodes } from 'youtubei.js';
-import { exhaustiveCheck } from '../utils';
+import type { Channel, Duration, Song, Views } from '../types/song.ts';
+import { exhaustiveCheck } from '../utils/exhaustiveCheck.ts';
 
 export type SongResourceCreatorArgs = YTNodes.CompactVideo | YTNodes.GridVideo | YTNodes.PlaylistVideo | YTNodes.Video;
 
@@ -48,23 +46,23 @@ export class SongResource implements Song {
   #fromCompactVideoOrVideo(video: YTNodes.CompactVideo | YTNodes.Video) {
     const thumbnail =
       video.best_thumbnail?.url || video.thumbnails.at(0)?.url || this.#getPlaceholder(video.title.toString());
-    const views = video.view_count.toString().replace(/,/g, '').split(' ').at(0);
+    const views = video.view_count?.toString().replace(/,/g, '').split(' ').at(0);
 
     this.channel = {
       name: video.author.name,
       url: video.author.url,
     };
     this.duration = {
-      label: video.duration.text,
+      label: video.duration.text?.toString() ?? '[N / A]',
       seconds: video.duration.seconds,
     };
     this.id = video.id;
     this.name = video.title.toString();
-    this.published = video.published.toString();
+    this.published = video.published?.toString() ?? '[N / A]';
     this.thumbnail = thumbnail;
     this.views = {
       count: Number.parseInt(views || '0', 10),
-      label: video.short_view_count.toString(),
+      label: video.short_view_count?.toString() ?? '[N / A]',
     };
   }
 

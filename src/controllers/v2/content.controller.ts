@@ -1,10 +1,12 @@
 import fs from 'node:fs';
-import { cache } from '@app';
-import { ApiError, VideoInfoToMediaInfoAdapter } from '@resources';
-import { getResource } from '@services';
-import type { MediaInfo, VideoInfo } from '@types';
 import type { NextFunction, Request, Response } from 'express';
 import { Innertube, UniversalCache } from 'youtubei.js';
+import { cache } from '../../main.ts';
+import { ApiError } from '../../resources/ApiError.ts';
+import { VideoInfoToMediaInfoAdapter } from '../../resources/VideoInfoToMediaInfoAdapter.ts';
+import { getResource } from '../../services/download.service.ts';
+import type { MediaInfo } from '../../types/mediaInfo.ts';
+import type { VideoInfo } from '../../types/video.ts';
 
 const checkIdsCorrectness = async (
   req: Request<Record<string, never>, MediaInfo[], string[]>,
@@ -48,9 +50,9 @@ const streamAudio = async (req: Request<{ id: string }>, res: Response, next: Ne
     }
 
     const resourcePath = await getResource(resourceID);
-    fs.createReadStream(resourcePath).pipe(res);
 
     cache.setSync(resourceID, resourcePath);
+    fs.createReadStream(resourcePath).pipe(res);
   } catch (err) {
     next(new ApiError('failed to download audio', 500, err));
   }

@@ -1,6 +1,6 @@
-import { ApiError } from '@resources';
 import type { NextFunction, Request, Response } from 'express';
 import { Innertube, UniversalCache } from 'youtubei.js';
+import { ApiError } from '../../resources/ApiError.ts';
 
 const getMediaURL = async (
   req: Request<{ id: string }, { link: string }>,
@@ -34,12 +34,12 @@ const getMediaURL = async (
   try {
     const videoInfo = await youtube.getInfo(id);
     const audioLink = videoInfo.chooseFormat({
-      type: 'audio',
       quality: 'best',
+      type: 'audio',
     });
 
     const data: { link: string } = {
-      link: audioLink.decipher(youtube.session.player),
+      link: await audioLink.decipher(youtube.session.player),
     };
 
     res.status(200).json(data);

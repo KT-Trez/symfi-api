@@ -4,6 +4,6 @@
   },
   "ext": "ts",
   "ignore": ["dist", "node_modules"],
-  "watch": ["src"],
-  "verbose": true
+  "verbose": true,
+  "watch": ["src"]
 }

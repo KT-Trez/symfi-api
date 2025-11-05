@@ -1,5 +1,5 @@
-import type { MediaInfo, Thumbnail } from '@types';
 import type { YTNodes } from 'youtubei.js';
+import type { MediaInfo, Thumbnail } from '../types/mediaInfo.ts';
 
 export class VideoToMediaInfoAdapter implements MediaInfo {
   public channel: { id: string; name: string; url: string };
@@ -23,14 +23,14 @@ export class VideoToMediaInfoAdapter implements MediaInfo {
     this.id = video.id;
     this.metadata = {
       duration: {
-        label: video.duration.text,
+        label: video.duration.text?.toString() ?? '[N / A]',
         seconds: video.duration.seconds,
       },
-      published: video.published.toString(),
+      published: video.published?.toString() ?? '[N / A]',
       thumbnails: video.thumbnails,
       views: {
-        count: Number.parseInt(video.view_count.toString(), 10),
-        label: video.short_view_count.toString(),
+        count: video.view_count ? Number.parseInt(video.view_count.toString(), 10) : 0,
+        label: video.short_view_count?.toString() ?? '[N / A]',
       },
     };
     this.title = video.title.toString();

@@ -1,4 +1,4 @@
-import type { Thumbnail } from './mediaInfo';
+import type { Thumbnail } from './mediaInfo.ts';
 
 export type VideoInfo = {
   basic_info: {

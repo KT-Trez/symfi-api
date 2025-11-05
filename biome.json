@@ -1,7 +1,18 @@
 {
   "$schema": "https://biomejs.dev/schemas/2.3.4/schema.json",
+  "assist": {
+    "actions": {
+      "source": {
+        "organizeImports": "on",
+        "useSortedAttributes": "on",
+        "useSortedKeys": "on",
+        "useSortedProperties": "on"
+      }
+    },
+    "enabled": true
+  },
   "files": {
-    "includes": ["**/*.ts", "**/*.json", "!**/package.json", "!**/package-lock.json"]
+    "includes": ["**/*.json", "**/*.ts", "/**/*.tsx"]
   },
   "formatter": {
     "enabled": true,
@@ -13,46 +24,30 @@
   "javascript": {
     "formatter": {
       "arrowParentheses": "asNeeded",
+      "enabled": true,
       "quoteStyle": "single"
-    },
-    "globals": ["afterAll", "beforeAll", "beforeEach", "describe", "expect", "it", "jest"]
+    }
+  },
+  "json": {
+    "formatter": {
+      "enabled": true
+    }
   },
   "linter": {
     "enabled": true,
     "rules": {
-      "complexity": {
-        "useDateNow": "error"
-      },
       "correctness": {
         "noNodejsModules": "off"
       },
-      "performance": {
-        "noBarrelFile": "off",
-        "noReExportAll": "off"
-      },
-      "recommended": true,
-      "security": {},
       "style": {
-        "useFilenamingConvention": "off",
-        "useNamingConvention": "off",
-        "noDoneCallback": "error",
-        "noYodaExpression": "error",
-        "useConsistentBuiltinInstantiation": "error",
-        "useDefaultSwitchClause": "error",
-        "useExplicitLengthCheck": "error",
-        "useThrowNewError": "error",
-        "useThrowOnlyError": "error"
-      },
-      "suspicious": {
-        "noDuplicateAtImportRules": "error",
-        "noDuplicateElseIf": "error",
-        "noDuplicateFontNames": "error",
-        "noDuplicateSelectorsKeyframeBlock": "error",
-        "noEmptyBlock": "error",
-        "noEvolvingTypes": "error",
-        "noReactSpecificProps": "error"
+        "useNamingConvention": "off"
       }
     }
   },
-  "assist": { "actions": { "source": { "organizeImports": "on" } } }
+  "vcs": {
+    "clientKind": "git",
+    "defaultBranch": "master",
+    "enabled": true,
+    "useIgnoreFile": true
+  }
 }

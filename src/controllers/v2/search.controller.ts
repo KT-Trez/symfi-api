@@ -1,7 +1,8 @@
-import { ApiError, VideoToMediaInfoAdapter } from '@resources';
-import type { MediaInfo } from '@types';
 import type { NextFunction, Request, Response } from 'express';
-import { Innertube, UniversalCache } from 'youtubei.js';
+import { Innertube, UniversalCache, YTNodes } from 'youtubei.js';
+import { ApiError } from '../../resources/ApiError.ts';
+import { VideoToMediaInfoAdapter } from '../../resources/VideoToMediaInfoAdapter.ts';
+import type { MediaInfo } from '../../types/mediaInfo.ts';
 
 const searchThroughYouTube = async (
   req: Request<
@@ -21,6 +22,8 @@ const searchThroughYouTube = async (
     cache: new UniversalCache(false),
   });
 
+  console.log(query);
+
   try {
     const search = await youtube.search(query, {
       sort_by: 'relevance',
@@ -32,9 +35,7 @@ const searchThroughYouTube = async (
     }
 
     const data: MediaInfo[] = search.videos
-      .filter(video => video.type === 'Video')
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-expect-error
+      .filter(video => video instanceof YTNodes.Video)
       .map(video => new VideoToMediaInfoAdapter(video));
 
     res.status(200).json(data);

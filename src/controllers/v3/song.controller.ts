@@ -1,7 +1,11 @@
-import { ApiErrorV2, ApiSuccess, CollectionFormatResource, SongResource } from '@resources';
-import type { CollectionFormat, NoBody, NoParams, NoQuery, Song } from '@types';
 import type { NextFunction, Request, Response } from 'express';
 import { Innertube, UniversalCache, Utils } from 'youtubei.js';
+import { ApiErrorV2 } from '../../resources/ApiError.ts';
+import { ApiSuccess } from '../../resources/ApiSuccess.ts';
+import { CollectionFormatResource } from '../../resources/CollectionFormat.ts';
+import { SongResource } from '../../resources/Song.ts';
+import type { CollectionFormat, NoBody, NoParams, NoQuery } from '../../types/api.ts';
+import type { Song } from '../../types/song.ts';
 
 const download = async (
   req: Request<NoParams, NoBody, ApiSuccess, { id: string }>,
@@ -37,7 +41,7 @@ const download = async (
       type: 'audio',
     });
 
-    res.status(200).json(new ApiSuccess('Video found', format.decipher(youtube.session.player)));
+    res.status(200).json(new ApiSuccess('Video found', await format.decipher(youtube.session.player)));
   } catch (err) {
     if (err instanceof Error && /this video is unavailable/i.test(err.message)) {
       next(new ApiErrorV2(404, 'Not Found', 'The requested video was not found.'));
@@ -118,8 +122,8 @@ const songId = async (
   try {
     const stream = await youtube.download(id, {
       format: 'webm',
-      type: 'audio',
       quality: 'best',
+      type: 'audio',
     });
 
     for await (const chunk of Utils.streamToIterable(stream)) {

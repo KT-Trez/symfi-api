@@ -1,6 +1,6 @@
-import { ApiSuccess } from '@resources';
 import express, { type Response } from 'express';
-import { songRouter } from './v3';
+import { ApiSuccess } from '../resources/ApiSuccess.ts';
+import { songRouter } from './v3/song.router.ts';
 
 const router = express.Router();
 

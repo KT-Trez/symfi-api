@@ -1,5 +1,6 @@
-import type { MediaInfo, Thumbnail, VideoInfo } from '@types';
-import { ApiError } from './ApiError';
+import type { MediaInfo, Thumbnail } from '../types/mediaInfo.ts';
+import type { VideoInfo } from '../types/video.ts';
+import { ApiError } from './ApiError.ts';
 
 export class VideoInfoToMediaInfoAdapter implements MediaInfo {
   public channel: { id: string; name: string; url: string };
