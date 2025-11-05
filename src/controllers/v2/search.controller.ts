@@ -34,7 +34,7 @@ const searchThroughYouTube = async (
     const data: MediaInfo[] = search.videos
       .filter(video => video.type === 'Video')
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
+      // @ts-expect-error
       .map(video => new VideoToMediaInfoAdapter(video));
 
     res.status(200).json(data);

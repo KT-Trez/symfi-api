@@ -29,7 +29,7 @@ export class VideoToMediaInfoAdapter implements MediaInfo {
       published: video.published.toString(),
       thumbnails: video.thumbnails,
       views: {
-        count: Number.parseInt(video.view_count.toString()),
+        count: Number.parseInt(video.view_count.toString(), 10),
         label: video.short_view_count.toString(),
       },
     };

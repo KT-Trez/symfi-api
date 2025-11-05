@@ -63,7 +63,7 @@ export class SongResource implements Song {
     this.published = video.published.toString();
     this.thumbnail = thumbnail;
     this.views = {
-      count: Number.parseInt(views || '0'),
+      count: Number.parseInt(views || '0', 10),
       label: video.short_view_count.toString(),
     };
   }
@@ -78,14 +78,14 @@ export class SongResource implements Song {
     };
     this.duration = {
       label: video.duration?.toString() || '',
-      seconds: Number.parseInt(video.duration?.toString() || '0'),
+      seconds: Number.parseInt(video.duration?.toString() || '0', 10),
     };
     this.id = video.id;
     this.name = video.title.toString();
     this.published = video.published.toString();
     this.thumbnail = thumbnail;
     this.views = {
-      count: Number.parseInt(views || '0'),
+      count: Number.parseInt(views || '0', 10),
       label: video.short_view_count.toString(),
     };
   }

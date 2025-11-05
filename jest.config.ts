@@ -22,5 +22,4 @@ const config: Config = {
   verbose: true,
 };
 
-// biome-ignore lint/style/noDefaultExport: it is required to correctly initialize the jest config file
 export default config;

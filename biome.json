@@ -1,8 +1,7 @@
 {
-  "$schema": "https://biomejs.dev/schemas/1.8.3/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.3.4/schema.json",
   "files": {
-    "ignore": ["package.json", "package-lock.json"],
-    "include": ["**/*.ts", "**/*.json"]
+    "includes": ["**/*.ts", "**/*.json", "!**/package.json", "!**/package-lock.json"]
   },
   "formatter": {
     "enabled": true,
@@ -22,51 +21,38 @@
     "enabled": true,
     "rules": {
       "complexity": {
-        "all": true
+        "useDateNow": "error"
       },
       "correctness": {
-        "all": true,
         "noNodejsModules": "off"
       },
-      "nursery": {
-        "noDoneCallback": "error",
-        "noDuplicateAtImportRules": "error",
-        "noDuplicateElseIf": "error",
-        "noDuplicateFontNames": "error",
-        "noDuplicateJsonKeys": "error",
-        "noDuplicateSelectorsKeyframeBlock": "error",
-        "noEmptyBlock": "error",
-        "noEvolvingTypes": "error",
-        "noReactSpecificProps": "error",
-        "noYodaExpression": "error",
-        "useConsistentBuiltinInstantiation": "error",
-        "useDateNow": "error",
-        "useDefaultSwitchClause": "error",
-        "useExplicitLengthCheck": "error",
-        "useImportRestrictions": "error",
-        "useThrowNewError": "error",
-        "useThrowOnlyError": "error"
-      },
       "performance": {
-        "all": true,
         "noBarrelFile": "off",
         "noReExportAll": "off"
       },
       "recommended": true,
-      "security": {
-        "all": true
-      },
+      "security": {},
       "style": {
-        "all": true,
         "useFilenamingConvention": "off",
-        "useNamingConvention": "off"
+        "useNamingConvention": "off",
+        "noDoneCallback": "error",
+        "noYodaExpression": "error",
+        "useConsistentBuiltinInstantiation": "error",
+        "useDefaultSwitchClause": "error",
+        "useExplicitLengthCheck": "error",
+        "useThrowNewError": "error",
+        "useThrowOnlyError": "error"
       },
       "suspicious": {
-        "all": true
+        "noDuplicateAtImportRules": "error",
+        "noDuplicateElseIf": "error",
+        "noDuplicateFontNames": "error",
+        "noDuplicateSelectorsKeyframeBlock": "error",
+        "noEmptyBlock": "error",
+        "noEvolvingTypes": "error",
+        "noReactSpecificProps": "error"
       }
     }
   },
-  "organizeImports": {
-    "enabled": true
-  }
+  "assist": { "actions": { "source": { "organizeImports": "on" } } }
 }
