@@ -3,7 +3,7 @@ import path from 'node:path';
 import { Innertube, UniversalCache, Utils } from 'youtubei.js';
 
 /**
- * Downloads an audio file from YouTube.
+ * Downloads an audio file from YouTube and converts it to WAV using ffmpeg.
  */
 export const getResource = async (
   resourceId: string,
@@ -25,7 +25,7 @@ export const getResource = async (
     fs.mkdirSync(resourceCacheDirPath);
   }
 
-  const resourcePath = path.resolve(resourceCacheDirPath, resourceId);
+  const resourcePath = path.resolve(resourceCacheDirPath, `${resourceId}.raw`);
   const resource = fs.createWriteStream(resourcePath);
 
   for await (const chunk of Utils.streamToIterable(stream)) {

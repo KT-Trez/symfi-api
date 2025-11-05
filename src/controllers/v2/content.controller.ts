@@ -5,6 +5,7 @@ import { cache } from '../../main.ts';
 import { ApiError } from '../../resources/ApiError.ts';
 import { VideoInfoToMediaInfoAdapter } from '../../resources/VideoInfoToMediaInfoAdapter.ts';
 import { getResource } from '../../services/download.service.ts';
+import { transcodeAudioToCodec } from '../../services/transcode.service.ts';
 import type { MediaInfo } from '../../types/mediaInfo.ts';
 import type { VideoInfo } from '../../types/video.ts';
 
@@ -46,13 +47,14 @@ const streamAudio = async (req: Request<{ id: string }>, res: Response, next: Ne
     // if the resource was already downloaded (the path to resource was cached),
     // stream downloaded resource
     if (cachedPath) {
-      return fs.createReadStream(cachedPath).pipe(res);
+      return fs.createReadStream(cachedPath).pipe(res.setHeader('Content-Type', 'audio/wav'));
     }
 
-    const resourcePath = await getResource(resourceID);
+    const rawResourcePath = await getResource(resourceID);
+    const resourcePath = await transcodeAudioToCodec(rawResourcePath);
 
     cache.setSync(resourceID, resourcePath);
-    fs.createReadStream(resourcePath).pipe(res);
+    fs.createReadStream(resourcePath).pipe(res.setHeader('Content-Type', 'audio/wav'));
   } catch (err) {
     next(new ApiError('failed to download audio', 500, err));
   }
