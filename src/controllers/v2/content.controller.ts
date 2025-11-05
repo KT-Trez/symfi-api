@@ -41,7 +41,8 @@ const checkIdsCorrectness = async (
 const streamAudio = async (req: Request<{ id: string }>, res: Response, next: NextFunction) => {
   // get resource id and path to resource if it is cached
   const resourceID = decodeURI(req.params.id);
-  const cachedPath = cache.getSync(resourceID);
+  const cacheKey = `song-wav-${resourceID}`;
+  const cachedPath = cache.getSync(cacheKey);
 
   try {
     // if the resource was already downloaded (the path to resource was cached),
@@ -53,7 +54,7 @@ const streamAudio = async (req: Request<{ id: string }>, res: Response, next: Ne
     const rawResourcePath = await getResource(resourceID);
     const resourcePath = await transcodeAudioToCodec(rawResourcePath);
 
-    cache.setSync(resourceID, resourcePath);
+    cache.setSync(cacheKey, resourcePath);
     fs.createReadStream(resourcePath).pipe(res.setHeader('Content-Type', 'audio/wav'));
   } catch (err) {
     next(new ApiError('failed to download audio', 500, err));

@@ -1,4 +1,4 @@
-FROM node:20
+FROM node:24
 
 LABEL authors="kttrez"
 LABEL name="symfi-api"
@@ -7,7 +7,7 @@ EXPOSE 5000
 
 WORKDIR /usr/src/app
 
-COPY dist ./dist
+COPY src ./src
 COPY package*.json ./
 COPY tsconfig.json ./
 

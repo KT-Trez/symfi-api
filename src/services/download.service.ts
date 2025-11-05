@@ -25,7 +25,7 @@ export const getResource = async (
     fs.mkdirSync(resourceCacheDirPath);
   }
 
-  const resourcePath = path.resolve(resourceCacheDirPath, `${resourceId}.raw`);
+  const resourcePath = path.resolve(resourceCacheDirPath, resourceId);
   const resource = fs.createWriteStream(resourcePath);
 
   for await (const chunk of Utils.streamToIterable(stream)) {

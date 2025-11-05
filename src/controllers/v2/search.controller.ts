@@ -22,8 +22,6 @@ const searchThroughYouTube = async (
     cache: new UniversalCache(true),
   });
 
-  console.log(query);
-
   try {
     const search = await youtube.search(query, {
       sort_by: 'relevance',

@@ -8,8 +8,8 @@ const clearPath = (path: string) => {
   }
 };
 
-export const transcodeAudioToCodec = (inputPath: string, codec = 'pcm_s16le') => {
-  const outputPath = `${inputPath}.wav`;
+export const transcodeAudioToCodec = (inputPath: string, codec = 'pcm_s16le', extension = 'wav') => {
+  const outputPath = `${inputPath}.${extension}`;
 
   return new Promise<string>((resolve, reject) => {
     const args = [

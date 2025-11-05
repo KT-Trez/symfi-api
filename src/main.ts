@@ -60,10 +60,6 @@ app.use((req, _res, next) => {
 app.use('/v2', limiter, v2Router);
 app.use('/v3', limiter, v3Router);
 
-// app.all('*', (_req, _res, next: NextFunction) => {
-//   next(new ApiErrorV2(404, 'Not Found', 'The requested resource was not found.'));
-// });
-
 app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
   logger.log(`${err.message} | ${err.cause}`, 'ERROR');
 
