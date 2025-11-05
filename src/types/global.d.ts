@@ -10,6 +10,7 @@ declare global {
       PORT?: string;
       PROXY_DOWNLOAD_ENABLED?: 'true';
       PROXY_DOWNLOAD_ORIGIN?: string;
+      PROXY_DOWNLOAD_STREAM_ENDPOINT?: string;
 
       npm_package_version?: string;
     }

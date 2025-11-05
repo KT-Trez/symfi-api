@@ -11,9 +11,7 @@ router.get('/ping', (_req, res: Response<ApiSuccess>) => {
 });
 
 router.get('/version', (_req, res: Response<ApiSuccess>) => {
-  res
-    .status(200)
-    .json(new ApiSuccess(process.env.npm_package_version || '4.x.x'));
+  res.status(200).json(new ApiSuccess(process.env.npm_package_version || '4.x.x'));
 });
 
 export { router as v3Router };

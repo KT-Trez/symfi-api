@@ -45,10 +45,7 @@ export class Logger {
       second: '2-digit',
       year: 'numeric',
     }).format(new Date());
-    const pad = ''.padEnd(
-      Logger.labelsLength - Logger.labels[options].length,
-      ' ',
-    );
+    const pad = ''.padEnd(Logger.labelsLength - Logger.labels[options].length, ' ');
     const severity = this.color(Logger.labels[options], options);
 
     switch (options) {

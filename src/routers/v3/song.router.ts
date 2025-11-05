@@ -2,6 +2,7 @@ import { songController } from '@controllers';
 import { requestValidatorService } from '@services';
 import express from 'express';
 import { param, query } from 'express-validator';
+import { Innertube, UniversalCache } from 'youtubei.js';
 
 const router = express.Router();
 
@@ -19,11 +20,28 @@ router.get(
 );
 
 router.get(
+  ['/meta', '/meta/:id'],
+  param('id')
+    .notEmpty()
+    .withMessage('required, must be a string')
+    .bail()
+    .custom(async (_, { req }) => {
+      const audioID = req.params?.id;
+
+      const youtube = await Innertube.create({
+        cache: new UniversalCache(false),
+      });
+
+      return !!(await youtube.getInfo(audioID));
+    })
+    .withMessage('incorrect id, no such song'),
+  requestValidatorService,
+  songController.meta,
+);
+
+router.get(
   '/search',
-  query('page')
-    .optional()
-    .isInt({ min: 0 })
-    .withMessage('optional, must be a number greater than or equal to 0'),
+  query('page').optional().isInt({ min: 0 }).withMessage('optional, must be a number greater than or equal to 0'),
   query('q')
     .exists()
     .withMessage('required')

@@ -23,8 +23,7 @@ describe('test "/v3/song" router', () => {
     const errorTestCases: ErrorTestCase[] = [
       {
         message: 'Bad Request',
-        reason:
-          'query [id]: required\nquery [id]: must be a string\nquery [id]: must be not empty',
+        reason: 'query [id]: required\nquery [id]: must be a string\nquery [id]: must be not empty',
         status: 400,
       },
       {
@@ -59,30 +58,24 @@ describe('test "/v3/song" router', () => {
       },
     );
 
-    const successTestCases: SuccessTestCase[] = [
-      { params: { id: 'dQw4w9WgXcQ' } },
-    ];
+    const successTestCases: SuccessTestCase[] = [{ params: { id: 'dQw4w9WgXcQ' } }];
 
-    it.each(successTestCases)(
-      'should return download link for the query: $params',
-      async ({ params }) => {
-        const res = await agent.get('/v3/song/download').query(params || {});
+    it.each(successTestCases)('should return download link for the query: $params', async ({ params }) => {
+      const res = await agent.get('/v3/song/download').query(params || {});
 
-        expect(res.status).toBe(200);
-        expect(res.body.http_status).toEqual(200);
-        expect(res.body.message).toEqual('Video found');
-        expect(res.body.meta).toMatch(/^https?:\S+\.\S{2,3}/);
-        expect(res.body.success).toBeTruthy();
-      },
-    );
+      expect(res.status).toBe(200);
+      expect(res.body.http_status).toEqual(200);
+      expect(res.body.message).toEqual('Video found');
+      expect(res.body.meta).toMatch(/^https?:\S+\.\S{2,3}/);
+      expect(res.body.success).toBeTruthy();
+    });
   });
 
   describe('test "/v3/song/search" endpoint', () => {
     const errorTestCases: ErrorTestCase[] = [
       {
         message: 'Bad Request',
-        reason:
-          'query [q]: required\nquery [q]: must be a string\nquery [q]: must be not empty',
+        reason: 'query [q]: required\nquery [q]: must be a string\nquery [q]: must be not empty',
         status: 400,
       },
       {
@@ -111,29 +104,22 @@ describe('test "/v3/song" router', () => {
       },
     );
 
-    const successTestCases: SuccessTestCase[] = [
-      { params: { q: 'rick' } },
-      { params: { q: 123 } },
-    ];
+    const successTestCases: SuccessTestCase[] = [{ params: { q: 'rick' } }, { params: { q: 123 } }];
 
-    it.each(successTestCases)(
-      'should return search results for the search query: $params',
-      async ({ params }) => {
-        const res = await agent.get('/v3/song/search').query(params || {});
+    it.each(successTestCases)('should return search results for the search query: $params', async ({ params }) => {
+      const res = await agent.get('/v3/song/search').query(params || {});
 
-        expect(res.status).toBe(200);
-        expect(res.body).toHaveProperty('objects');
-        expect(res.body.objects.length).toBeGreaterThan(0);
-      },
-    );
+      expect(res.status).toBe(200);
+      expect(res.body).toHaveProperty('objects');
+      expect(res.body.objects.length).toBeGreaterThan(0);
+    });
   });
 
   describe('test "/v3/song/suggestion" endpoint', () => {
     const errorTestCases: ErrorTestCase[] = [
       {
         message: 'Bad Request',
-        reason:
-          'query [q]: required\nquery [q]: must be a string\nquery [q]: must be not empty',
+        reason: 'query [q]: required\nquery [q]: must be a string\nquery [q]: must be not empty',
         status: 400,
       },
       {
@@ -164,21 +150,15 @@ describe('test "/v3/song" router', () => {
       },
     );
 
-    const successTestCases: SuccessTestCase[] = [
-      { params: { q: 'rick' } },
-      { params: { q: 123 } },
-    ];
+    const successTestCases: SuccessTestCase[] = [{ params: { q: 'rick' } }, { params: { q: 123 } }];
 
-    it.each(successTestCases)(
-      'should return search suggestions for the search query: $params',
-      async ({ params }) => {
-        const res = await agent.get('/v3/song/suggestion').query(params || {});
+    it.each(successTestCases)('should return search suggestions for the search query: $params', async ({ params }) => {
+      const res = await agent.get('/v3/song/suggestion').query(params || {});
 
-        expect(res.status).toBe(200);
-        expect(res.body).toHaveProperty('objects');
-        expect(res.body.objects.length).toBeGreaterThan(0);
-      },
-    );
+      expect(res.status).toBe(200);
+      expect(res.body).toHaveProperty('objects');
+      expect(res.body.objects.length).toBeGreaterThan(0);
+    });
   });
 
   describe('test "/v3/song/:id" endpoint', () => {
@@ -203,19 +183,14 @@ describe('test "/v3/song" router', () => {
       },
     );
 
-    const successTestCases: SuccessTestCase[] = [
-      { params: { id: 'dQw4w9WgXcQ' } },
-    ];
+    const successTestCases: SuccessTestCase[] = [{ params: { id: 'dQw4w9WgXcQ' } }];
 
-    it.each(successTestCases)(
-      'should return song info for the param: $params',
-      async ({ params }) => {
-        const res = await agent.get(`/v3/song/${params?.id}`);
+    it.each(successTestCases)('should return song info for the param: $params', async ({ params }) => {
+      const res = await agent.get(`/v3/song/${params?.id}`);
 
-        expect(res.status).toBe(200);
-        expect(res.get('Connection')).toMatch(/close/);
-        expect(res.get('Transfer-Encoding')).toMatch(/chunked/);
-      },
-    );
+      expect(res.status).toBe(200);
+      expect(res.get('Connection')).toMatch(/close/);
+      expect(res.get('Transfer-Encoding')).toMatch(/chunked/);
+    });
   });
 });

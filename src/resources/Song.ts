@@ -4,11 +4,7 @@ import type { Channel, Duration, Song, Views } from '@types';
 import { YTNodes } from 'youtubei.js';
 import { exhaustiveCheck } from '../utils';
 
-export type SongResourceCreatorArgs =
-  | YTNodes.CompactVideo
-  | YTNodes.GridVideo
-  | YTNodes.PlaylistVideo
-  | YTNodes.Video;
+export type SongResourceCreatorArgs = YTNodes.CompactVideo | YTNodes.GridVideo | YTNodes.PlaylistVideo | YTNodes.Video;
 
 export class SongResource implements Song {
   channel!: Channel;
@@ -51,14 +47,8 @@ export class SongResource implements Song {
 
   #fromCompactVideoOrVideo(video: YTNodes.CompactVideo | YTNodes.Video) {
     const thumbnail =
-      video.best_thumbnail?.url ||
-      video.thumbnails.at(0)?.url ||
-      this.#getPlaceholder(video.title.toString());
-    const views = video.view_count
-      .toString()
-      .replace(/,/g, '')
-      .split(' ')
-      .at(0);
+      video.best_thumbnail?.url || video.thumbnails.at(0)?.url || this.#getPlaceholder(video.title.toString());
+    const views = video.view_count.toString().replace(/,/g, '').split(' ').at(0);
 
     this.channel = {
       name: video.author.name,
@@ -79,9 +69,7 @@ export class SongResource implements Song {
   }
 
   #fromGridVideo(video: YTNodes.GridVideo) {
-    const thumbnail =
-      video.thumbnails.at(0)?.url ||
-      this.#getPlaceholder(video.title.toString());
+    const thumbnail = video.thumbnails.at(0)?.url || this.#getPlaceholder(video.title.toString());
     const views = video.views.toString().replace(/,/g, '').split(' ').at(0);
 
     this.channel = {
@@ -103,9 +91,7 @@ export class SongResource implements Song {
   }
 
   #fromPlaylistVideo(video: YTNodes.PlaylistVideo) {
-    const thumbnail =
-      video.thumbnails.at(0)?.url ||
-      this.#getPlaceholder(video.title.toString());
+    const thumbnail = video.thumbnails.at(0)?.url || this.#getPlaceholder(video.title.toString());
 
     this.channel = {
       name: video.author.name,

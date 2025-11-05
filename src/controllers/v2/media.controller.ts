@@ -12,8 +12,16 @@ const getMediaURL = async (
 
   // redirect request to the local endpoint that streams audio
   if (process.env.PROXY_DOWNLOAD_ENABLED) {
+    const streamEndpointEnv = process.env.PROXY_DOWNLOAD_STREAM_ENDPOINT;
+    const hasCustomStreamEndpoint = streamEndpointEnv?.match(/true/i);
+
+    const origin = process.env.PROXY_DOWNLOAD_ORIGIN || `${req.protocol}://${req.get('host')}`;
+    const path = hasCustomStreamEndpoint ? `/v3/song/stream/${id}` : `/v3/song/${id}`;
+
+    const url = new URL(path, origin);
+
     return res.status(200).json({
-      link: `${req.protocol}://${req.get('host')}/v2/content/youtube/${id}`,
+      link: url.href,
     });
   }
 

@@ -10,7 +10,7 @@ Backend service for the Symfi application.
 * `PORT`: (`number | undefined`) – port to run the server on
 * `PROXY_DOWNLOAD_ENABLED`: (`true | undefined`) – enable proxy download
 * `PROXY_DOWNLOAD_ORIGIN`: (`string | undefined`) – origin to proxy download
-  requests to
+* `PROXY_DOWNLOAD_STREAM_ENDPOINT`: (`true | undefined`) – uses newer "/stream" endpoint for proxy download (requires PROXY_DOWNLOAD_ENABLED)
 
 ## License
 

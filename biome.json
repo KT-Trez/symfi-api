@@ -1,10 +1,7 @@
 {
   "$schema": "https://biomejs.dev/schemas/1.8.3/schema.json",
   "files": {
-    "ignore": [
-      "package.json",
-      "package-lock.json"
-    ],
+    "ignore": ["package.json", "package-lock.json"],
     "include": ["**/*.ts", "**/*.json"]
   },
   "formatter": {
@@ -12,22 +9,14 @@
     "indentStyle": "space",
     "indentWidth": 2,
     "lineEnding": "lf",
-    "lineWidth": 80
+    "lineWidth": 120
   },
   "javascript": {
     "formatter": {
       "arrowParentheses": "asNeeded",
       "quoteStyle": "single"
     },
-    "globals": [
-      "afterAll",
-      "beforeAll",
-      "beforeEach",
-      "describe",
-      "expect",
-      "it",
-      "jest"
-    ]
+    "globals": ["afterAll", "beforeAll", "beforeEach", "describe", "expect", "it", "jest"]
   },
   "linter": {
     "enabled": true,

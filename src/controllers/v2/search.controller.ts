@@ -8,7 +8,9 @@ const searchThroughYouTube = async (
     Record<string, never>,
     MediaInfo[],
     undefined,
-    { query: string }
+    {
+      query: string;
+    }
   >,
   res: Response<MediaInfo[]>,
   next: NextFunction,

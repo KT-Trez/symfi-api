@@ -32,7 +32,7 @@ export const getResource = async (
 ): Promise<string> => {
   const youtube = await Innertube.create({
     cache: new UniversalCache(true),
-    generate_session_locally: true
+    generate_session_locally: true,
   });
 
   const stream = await youtube.download(resourceId, {
