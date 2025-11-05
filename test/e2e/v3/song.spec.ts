@@ -1,5 +1,5 @@
-import { app, server } from '@app';
 import supertest from 'supertest';
+import { app, server } from '../../../src/main.ts';
 
 type ErrorTestCase = {
   message: string;
@@ -186,7 +186,7 @@ describe('test "/v3/song" router', () => {
     const successTestCases: SuccessTestCase[] = [{ params: { id: 'dQw4w9WgXcQ' } }];
 
     it.each(successTestCases)('should return song info for the param: $params', async ({ params }) => {
-      const res = await agent.get(`/v3/song/${params?.id}`);
+      const res = await agent.get(`/v3/song/${params?.id}`).timeout(500);
 
       expect(res.status).toBe(200);
       expect(res.get('Connection')).toMatch(/close/);

@@ -4,13 +4,21 @@ Backend service for the Symfi application.
 
 ## Environment Variables
 
+### Main
+
 * `DEBUG`: (`true | undefined`) – debug mode, prints additional logs
 * `LOG_REQUESTS`: (`true | undefined`) – log all incoming requests
 * `NODE_ENV`: (`'test' | undefined`) – environment to run the server in
 * `PORT`: (`number | undefined`) – port to run the server on
-* `PROXY_DOWNLOAD_ENABLED`: (`true | undefined`) – enable proxy download
-* `PROXY_DOWNLOAD_ORIGIN`: (`string | undefined`) – origin to proxy download
-* `PROXY_DOWNLOAD_STREAM_ENDPOINT`: (`true | undefined`) – uses newer "/stream" endpoint for proxy download (requires PROXY_DOWNLOAD_ENABLED)
+
+### API V2, V3
+
+* `PROXY_DOWNLOAD_ENABLED`: (`true | undefined`) – makes the server act as a proxy for downloading audio files
+* `PROXY_DOWNLOAD_ORIGIN`: (`string | undefined`) – origin to proxy download, (requires: `PROXY_DOWNLOAD_ENABLED`)
+
+### API V3
+
+* `PROXY_DOWNLOAD_STREAM_ENDPOINT`: (`true | undefined`) – uses newer "/stream" endpoint for proxy download, (requires: `PROXY_DOWNLOAD_ENABLED`)
 
 ## License
 

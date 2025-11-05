@@ -1,5 +1,5 @@
-import { app, server } from '@app';
 import supertest from 'supertest';
+import { app, server } from '../../../src/main.ts';
 
 describe('test "/v3" router', () => {
   const agent = supertest(app);

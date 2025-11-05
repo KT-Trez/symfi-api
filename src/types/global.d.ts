@@ -1,7 +1,6 @@
 // noinspection JSUnusedGlobalSymbols
 
 declare global {
-  // biome-ignore lint/style/noNamespace: it is required to merge interfaces
   namespace NodeJS {
     interface ProcessEnv {
       DEBUG?: 'true';

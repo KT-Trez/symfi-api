@@ -1,8 +1,8 @@
-import { songController } from '@controllers';
-import { requestValidatorService } from '@services';
 import express from 'express';
 import { param, query } from 'express-validator';
 import { Innertube, UniversalCache } from 'youtubei.js';
+import { songController } from '../../controllers/v3/song.controller.ts';
+import { requestValidatorService } from '../../services/requestValidator.service.ts';
 
 const router = express.Router();
 
@@ -29,7 +29,7 @@ router.get(
       const audioID = req.params?.id;
 
       const youtube = await Innertube.create({
-        cache: new UniversalCache(false),
+        cache: new UniversalCache(true),
       });
 
       return !!(await youtube.getInfo(audioID));

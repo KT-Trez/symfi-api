@@ -1,7 +1,15 @@
-import { ApiErrorV2, ApiSuccess, CollectionFormatResource, SongResource } from '@resources';
-import type { CollectionFormat, NoBody, NoParams, NoQuery, Song } from '@types';
+import fs from 'node:fs';
 import type { NextFunction, Request, Response } from 'express';
-import { Innertube, UniversalCache, Utils } from 'youtubei.js';
+import { Innertube, UniversalCache } from 'youtubei.js';
+import { cache } from '../../main.ts';
+import { ApiErrorV2 } from '../../resources/ApiError.ts';
+import { ApiSuccess } from '../../resources/ApiSuccess.ts';
+import { CollectionFormatResource } from '../../resources/CollectionFormat.ts';
+import { SongResource } from '../../resources/Song.ts';
+import { getResource } from '../../services/download.service.ts';
+import { transcodeAudioToCodec } from '../../services/transcode.service.ts';
+import type { CollectionFormat, NoBody, NoParams, NoQuery } from '../../types/api.ts';
+import type { Song } from '../../types/song.ts';
 
 const download = async (
   req: Request<NoParams, NoBody, ApiSuccess, { id: string }>,
@@ -33,11 +41,12 @@ const download = async (
     }
 
     const format = info.chooseFormat({
+      client: 'YTMUSIC',
       quality: 'best',
       type: 'audio',
     });
 
-    res.status(200).json(new ApiSuccess('Video found', format.decipher(youtube.session.player)));
+    res.status(200).json(new ApiSuccess('Video found', await format.decipher(youtube.session.player)));
   } catch (err) {
     if (err instanceof Error && /this video is unavailable/i.test(err.message)) {
       next(new ApiErrorV2(404, 'Not Found', 'The requested video was not found.'));
@@ -108,25 +117,21 @@ const songId = async (
   res: Response<unknown>,
   next: NextFunction,
 ) => {
-  const id = req.params.id;
-
-  const youtube = await Innertube.create({
-    cache: new UniversalCache(true),
-    generate_session_locally: true,
-  });
+  // get resource id and path to resource if it is cached
+  const resourceID = decodeURI(req.params.id);
+  const cacheKey = `song-webm-${resourceID}`;
+  const cachedPath = cache.getSync(cacheKey);
 
   try {
-    const stream = await youtube.download(id, {
-      format: 'webm',
-      type: 'audio',
-      quality: 'best',
-    });
-
-    for await (const chunk of Utils.streamToIterable(stream)) {
-      res.write(chunk);
+    if (cachedPath) {
+      return fs.createReadStream(cachedPath).pipe(res.setHeader('Content-Type', 'audio/webm'));
     }
 
-    res.end();
+    const rawResourcePath = await getResource(resourceID);
+    const resourcePath = await transcodeAudioToCodec(rawResourcePath, 'libopus', 'webm');
+
+    cache.setSync(cacheKey, resourcePath);
+    fs.createReadStream(resourcePath).pipe(res.setHeader('Content-Type', 'audio/webm'));
   } catch (err) {
     const isError = err instanceof Error;
 

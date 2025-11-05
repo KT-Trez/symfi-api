@@ -1,4 +1,4 @@
-import type { CollectionFormat } from '@types';
+import type { CollectionFormat } from '../types/api.ts';
 
 const DEFAULT_PAGE = 0;
 

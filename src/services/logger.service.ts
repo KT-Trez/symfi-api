@@ -1,5 +1,4 @@
-/* eslint-disable no-console */
-import { exhaustiveCheck } from '../utils';
+import { exhaustiveCheck } from '../utils/exhaustiveCheck.ts';
 
 export const LOG_LEVEL_CONST = {
   DEBUG: 'DEBUG',

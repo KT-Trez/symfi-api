@@ -1,6 +1,6 @@
-import { ApiErrorV2 } from '@resources';
 import type { NextFunction, Request, Response } from 'express';
 import { type ValidationError, validationResult } from 'express-validator';
+import { ApiErrorV2 } from '../resources/ApiError.ts';
 
 const errorFormatter = (err: ValidationError) => {
   switch (err.type) {

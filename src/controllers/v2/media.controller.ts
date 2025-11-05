@@ -1,6 +1,6 @@
-import { ApiError } from '@resources';
 import type { NextFunction, Request, Response } from 'express';
 import { Innertube, UniversalCache } from 'youtubei.js';
+import { ApiError } from '../../resources/ApiError.ts';
 
 const getMediaURL = async (
   req: Request<{ id: string }, { link: string }>,
@@ -12,11 +12,8 @@ const getMediaURL = async (
 
   // redirect request to the local endpoint that streams audio
   if (process.env.PROXY_DOWNLOAD_ENABLED) {
-    const streamEndpointEnv = process.env.PROXY_DOWNLOAD_STREAM_ENDPOINT;
-    const hasCustomStreamEndpoint = streamEndpointEnv?.match(/true/i);
-
     const origin = process.env.PROXY_DOWNLOAD_ORIGIN || `${req.protocol}://${req.get('host')}`;
-    const path = hasCustomStreamEndpoint ? `/v3/song/stream/${id}` : `/v3/song/${id}`;
+    const path = `/v2/content/youtube/${id}`;
 
     const url = new URL(path, origin);
 
@@ -27,19 +24,19 @@ const getMediaURL = async (
 
   // search instance of the YouTube's API
   const youtube = await Innertube.create({
-    cache: new UniversalCache(false),
+    cache: new UniversalCache(true),
   });
 
   // find an external media stream, extract and send its link to the client
   try {
     const videoInfo = await youtube.getInfo(id);
     const audioLink = videoInfo.chooseFormat({
-      type: 'audio',
       quality: 'best',
+      type: 'audio',
     });
 
     const data: { link: string } = {
-      link: audioLink.decipher(youtube.session.player),
+      link: await audioLink.decipher(youtube.session.player),
     };
 
     res.status(200).json(data);
