@@ -16,7 +16,7 @@ export const getResource = async (
 
   const stream = await youtube.download(resourceId, {
     client: 'YTMUSIC',
-    quality: 'best',
+    // quality: 'best',
     type: resourceType,
   });
 

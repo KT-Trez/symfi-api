@@ -25,7 +25,6 @@ jobs:
         with:
           context: .
           file: ./Dockerfile
-          logout: true
           push: true
           tags: kttrez/symfi-api:latest
 on:
