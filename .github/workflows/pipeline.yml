@@ -28,9 +28,6 @@ jobs:
           logout: true
           push: true
           tags: kttrez/symfi-api:latest
-
-      - name: Deploy to Render.com
-        run: curl -X GET ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
 on:
   pull_request:
     branches:
